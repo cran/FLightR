@@ -127,8 +127,7 @@ run.particle.filter<-function(all.out, cpus=NULL, threads=-1, nParticles=1e6, kn
 
         #Final.Means=cbind(all.out$Results$Final.Means[-1,],
 		#time=all.out$Indices$Matrix.Index.Table$time),
-		Quantiles=cbind(all.out$Results$Quantiles[-1,],
-		time=all.out$Indices$Matrix.Index.Table$time),
+		Quantiles=all.out$Results$Quantiles,
 		Movement.results=all.out$Results$Movement.results,
 		outliers=all.out$Results$outliers,
 		LL=all.out$Results$LL,
@@ -618,14 +617,20 @@ get.coordinates.PF<-function(Points, in.Data, add.jitter=FALSE) {
   # new part for medians
   cat("estimating quantiles for positions\n")
 	
+		# check whether Grid was over dateline:
+	overdateline<-ifelse(attr(in.Data$Spatial$Grid, 'left')>	attr(in.Data$Spatial$Grid, 'right'), TRUE, FALSE)
+
+	
 	Quantiles<-c()
 	CIntervals<-c()
-	for (i in 1:length(Points)) {
 	cur_Grid<-in.Data$Spatial$Grid
-	#cur_Grid[,1]<-ifelse(cur_Grid[,1]<0, 360+in.Data$Spatial$Grid[,1], in.Data$Spatial$Grid[,1])
-	Mode_cur<-	cur_Grid[Points[[i]]$values[which.max(Points[[i]]$lengths)],1]
+	if (overdateline) cur_Grid[cur_Grid[,1]<0,1]<-cur_Grid[cur_Grid[,1]<0,1]+360
 	
-	cur_Grid[,1]<-ifelse(cur_Grid[,1]<Mode_cur-180, cur_Grid[,1]+360, cur_Grid[,1])
+	for (i in 1:length(Points)) {
+	
+
+	#Mode_cur<-	cur_Grid[Points[[i]]$values[which.max(Points[[i]]$lengths)],1]
+	#cur_Grid[,1]<-ifelse(cur_Grid[,1]<Mode_cur-180, cur_Grid[,1]+360, cur_Grid[,1])
 	Quantiles<-rbind(Quantiles, c(summary(cur_Grid[inverse.rle(Points[[i]]),2]), Mode=cur_Grid[Points[[i]]$values[which.max(Points[[i]]$lengths)],2], summary(cur_Grid[inverse.rle(Points[[i]]),1]), Mode=cur_Grid[Points[[i]]$values[which.max(Points[[i]]$lengths)],1]))
 	CIntervals<-rbind(CIntervals, c(stats::quantile(cur_Grid[inverse.rle(Points[[i]]),2], probs = c(0.025, 0.975)), stats::quantile(cur_Grid[inverse.rle(Points[[i]]),1], probs = c(0.025, 0.975))))
 	}
@@ -656,11 +661,20 @@ get.coordinates.PF<-function(Points, in.Data, add.jitter=FALSE) {
 	Quantiles$LCI.lon<-CIntervals[,3]
 	Quantiles$UCI.lon<-CIntervals[,4]
 	  
+	if (overdateline) {
+	   Columns<-c(8:15, 19, 20)
+       for (i in Columns) {
+           Quantiles[Quantiles[,i]>180,i]<-Quantiles[Quantiles[,i]>180,i]-360
+       }	   
+	}
+	if (nrow(Quantiles)==nrow(in.Data$Indices$Matrix.Index.Table)) {
+	   Quantiles<-cbind(Quantiles, time=in.Data$Indices$Matrix.Index.Table$time)
+	} else {
+	   Quantiles<-cbind(Quantiles[-1,], time=in.Data$Indices$Matrix.Index.Table$time)
+	}
 	in.Data$Results$Quantiles<-Quantiles
 	
-	#if (save.points.distribution) {
     in.Data$Results$Points.rle<-Points
-  #}
   return(in.Data)
 }
 

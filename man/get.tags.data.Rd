@@ -2,9 +2,7 @@
 % Please edit documentation in R/data_import.R
 \name{get.tags.data}
 \alias{get.tags.data}
-\title{#@title FLightR
-#@import ggplot2
-#@description With a hidden Markov model package estimates postions of animal from data collected by solar geolocation archival tags.}
+\title{read TAGS formatted data}
 \usage{
 get.tags.data(filename = NULL, start.date = NULL, end.date = NULL,
   log.light.borders = "auto", log.irrad.borders = "auto",

@@ -1,7 +1,5 @@
-#'
-#' #@title FLightR
-#' #@import ggplot2
-#' #@description With a hidden Markov model package estimates postions of animal from data collected by solar geolocation archival tags.
+#' 
+#' read TAGS formatted data
 #' 
 #' Reads the data frame with detected twilight events into the FlightR
 #' 
@@ -51,6 +49,16 @@ get.tags.data<-function(filename=NULL, start.date=NULL, end.date=NULL, log.light
 	  if(detected$tagtype=="GDL2v2_GDLpam") {
 	     if (log.light.borders[1]=='auto') log.light.borders<-c(2.5, 8)
 	     if (log.irrad.borders[1]=='auto') log.irrad.borders<-c(-6.5,1.5)
+	     if (saves[1] =='auto') saves<-"mean"
+      }
+	  if(detected$tagtype=="GDL1") {
+	     if (log.light.borders[1]=='auto') log.light.borders<-c(3, 7)
+	     if (log.irrad.borders[1]=='auto') log.irrad.borders<-c(-4,1)
+	     if (saves[1] =='auto') saves<-"mean"
+      }
+	  if(detected$tagtype=="GDL2v1") {
+	     if (log.light.borders[1]=='auto') log.light.borders<-c(2.2,7)
+	     if (log.irrad.borders[1]=='auto') log.irrad.borders<-c(-2.7,0)
 	     if (saves[1] =='auto') saves<-"mean"
       }
    }
@@ -130,6 +138,26 @@ get.tag.type<-function(TAGS.twilights) {
    }
    if (round(Max_light/10)==998) {
      tagtype<-"GDL2v2_GDLpam"
+	 log_transformed<-FALSE
+     recognized<-TRUE
+   }
+   if(round(Max_light,2)==11.32) {
+      tagtype<-"GDL1"
+      log_transformed<-TRUE
+	  recognized<-TRUE
+   }
+   if (round(Max_light)==82863) {
+     tagtype<-"GDL1"
+	 log_transformed<-FALSE
+     recognized<-TRUE
+   }
+   if(round(Max_light,2)==log(63)) {
+      tagtype<-"GDL2v1"
+      log_transformed<-TRUE
+	  recognized<-TRUE
+   }
+   if (Max_light==63) {
+     tagtype<-"GDL2v1"
 	 log_transformed<-FALSE
      recognized<-TRUE
    }
