@@ -3,24 +3,24 @@
 
 #' Run Particle Filter
 #' 
-#' Main function of FLightR, it takes fully prepared object created by \code{\link{make.prerun.object}} and produces a result object that can be used for plotiing etc.
+#' Main function of FLightR, it takes fully prepared object created by \code{\link{make.prerun.object}} and produces a result object that can be used for plotting etc.
 #' @param all.out An object created by \code{\link{make.prerun.object}}.
 #' @param threads An amount of threads to use while running in parallel. default is -1. if value 1 submitted package will run sequentially
 #' @param cpus another way to specify  \code{threads}
 #' @param nParticles  total amount of particles to be used with the run. 10 000 (1e4) is recommended for the preliminary run and 1 000 000 (1e6) for the final
 #' @param known.last Set to FALSE if your bird was not at a known place during last twilight in the data
-#' @param precision.sd if \code{known.last} then what is the precision of this information. Will be used to resample particles prportionally to their ditance from the known last point with probability \code{P = dnorm(0, precision.sd)}
+#' @param precision.sd if \code{known.last} then what is the precision of this information. Will be used to resample particles proportionally to their distance from the known last point with probability \code{P = dnorm(0, precision.sd)}
 #' @param behav.mask.low.value Probability value that will be used instead of 0 in the behavioural mask. If set to 1 behavioural mask will not be active anymore
 #' @param k Kappa parameter from vonMises distribution. Default is NA, otherwise will generate particles in a direction of a previous transitions with kappa = k
 #' @param plot Should function plot preliminary map in the end of the run?
 #' @param cluster.type see help to package parallel for details
-#' @param a minimum distance that is used in the movement model - left boundary for truncated normal distribtuon of ditances moved between twilights. Default is 45 for as default grid has a minimum ditance of 50 km.
-#' @param b Maximum distance allowed to fly between two consequtive twilights
-#' @param L how many consequitive particles to resample
+#' @param a minimum distance that is used in the movement model - left boundary for truncated normal distribution of distances moved between twilights. Default is 45 for as default grid has a minimum distance of 50 km.
+#' @param b Maximum distance allowed to fly between two consecutive twilights
+#' @param L how many consecutive particles to resample
 #' @param adaptive.resampling Above what level of ESS resampling should be skipped
 #' @param check.outliers switches ON the online outlier routine 
 #' @param sink2file will write run details in a file instead of showing on the screen
-#' @param add.jitter will add spatial jitter inside a grid cell for the median estiamtes
+#' @param add.jitter will add spatial jitter inside a grid cell for the median estimates
 #' @return FLightR object, containing output and extracted results. It is a list with the following elements 
 #' 
 #'    \item{Indices}{List with prior information and indices}
@@ -69,6 +69,7 @@
 #' @author Eldar Rakhimberdiev
 #' @export
 run.particle.filter<-function(all.out, cpus=NULL, threads=-1, nParticles=1e6, known.last=TRUE, precision.sd=25, behav.mask.low.value=0.00, k=NA, plot=TRUE, cluster.type="PSOCK", a=45, b=1500, L=90, adaptive.resampling=0.99, check.outliers=FALSE, sink2file=FALSE, add.jitter=FALSE) {
+   cl<-match.call()
    if (!is.null(cpus)) {
       warning("use threads instead of cpus! cpus will be supressed in the newer versions\n")
       threads<-cpus
@@ -146,7 +147,8 @@ run.particle.filter<-function(all.out, cpus=NULL, threads=-1, nParticles=1e6, kn
     gc()
   
   all.out$Spatial$tmp<-NULL
-  
+  all.out$call<-cl
+  all.out$Results$FLightRver<-utils::packageVersion("FLightR")
   cat("DONE!\n")
   return(all.out)
 }
@@ -431,15 +433,19 @@ pf.run.parallel.SO.resample<-function(in.Data, threads=2, nParticles=1e6, known.
     #=====================================================
     # here is the change from 1.6 - Adding cumulative weights now..
 	# and this came back at the version 3.2!
-    Current.Weights.with.Prev.mat<-cbind(Weights.stack, Current.Weights)
+    #Current.Weights.with.Prev.mat<-cbind(Weights.stack, Current.Weights)
     
 	#rowProds <- function(a) exp(rowMeans(log(a)))
     rowProds <- function(a) exp(rowSums(log(a)))
 	
 	#Current.Weights.with.Prev<-	pmax(rowProds(Current.Weights.with.Prev.mat), 1e-323)
 	
-	# here is the place - I'll check weights without use of the last stage information! 
-	Current.Weights.with.Prev<-	pmax(rowProds(Weights.stack), 1e-323)
+	if (Time.Period != total_length) {
+	   	# here is the place - I'll check weights without use of the last stage information! 
+     	Current.Weights.with.Prev<-	pmax(rowProds(Weights.stack), 1e-323)
+    } else {
+	    Current.Weights.with.Prev<-	pmax(rowProds(cbind(Weights.stack, Current.Weights)) , 1e-323)
+	}
 	#
     #================================================================
     # ver 1.7. 
@@ -453,6 +459,8 @@ pf.run.parallel.SO.resample<-function(in.Data, threads=2, nParticles=1e6, known.
       cat("ESS is ", ESS)
 if (is.na(ESS)) {
 	ESS=1
+	Current.Weights.with.Prev.mat<-cbind(Weights.stack, Current.Weights)
+
 	save(Current.Weights.with.Prev, Current.Weights.with.Prev.mat, Current.Weights, file="tmp.RData")
 	}		
     } else {
@@ -721,7 +729,7 @@ estimate.movement.parameters<-function(Trans, in.Data, fixed.parameters=NA, a=45
   Kappas<-unlist(lapply(Directions, FUN=function(x) CircStats::est.kappa(inverse.rle(list(lengths=x$lengths[!is.na(x$values)], values=x$values[!is.na(x$values)]*pi/180)))))
   
   
-  # now we want to get mean ditance
+  # now we want to get mean distance
   cat("   estimating mean dists\n")
   #
   #cat("   estimating mean and SD to report dists SD\n")
@@ -915,7 +923,7 @@ dist.fun<-function(x, Result) {
 }
 
 lazy.result.plot<-function(Result) {
-    graphics::plot(Meanlat~Meanlon, type="p", data=Result$Results$Quantiles, pch=3, col="blue", main="mean poistions")
+    graphics::plot(Meanlat~Meanlon, type="p", data=Result$Results$Quantiles, pch=3, col="blue", main="mean positions")
     graphics::points(Meanlat~Meanlon, type="p", data=Result$Results$Quantiles, pch=3, col="blue")
     graphics::lines(Meanlat~Meanlon, data=Result$Results$Quantiles, col="blue")
 	wrld_simpl<-NA

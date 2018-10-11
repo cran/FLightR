@@ -1,17 +1,17 @@
 #' 
 #' read TAGS formatted data
 #' 
-#' Reads the data frame with detected twilight events into the FlightR
+#' Reads the data frame with detected twilight events into the FLightR
 #' 
-#' @param filename the name of the file which the data are to be read from. File is supposed ot be comma separated file of TAGS format. If it does not contain an absolute path, the file name is relative to the current working directory, getwd(). Tilde-expansion is performed where supported. This can be a compressed file (see \code{\link[base]{file}}). Alternatively, file can be a readable text-mode connection (which will be opened for reading if necessary, and if so closed (and hence destroyed) at the end of the function call). File can also be a complete URL. For the supported URL schemes, see help for \code{\link[base]{url}}.
+#' @param filename the name of the file which the data are to be read from. File is supposed to be comma separated file of TAGS format. If it does not contain an absolute path, the file name is relative to the current working directory, getwd(). Tilde-expansion is performed where supported. This can be a compressed file (see \code{\link[base]{file}}). Alternatively, file can be a readable text-mode connection (which will be opened for reading if necessary, and if so closed (and hence destroyed) at the end of the function call). File can also be a complete URL. For the supported URL schemes, see help for \code{\link[base]{url}}.
 #' @param start.date date of beginning of relevant data collection in \code{\link[base]{POSIXct}} format.
 #' @param end.date date of end of relevant data collection in \code{\link[base]{POSIXct}} format.
 #' @param log.light.borders Numeric vector with length of 2 for minimum and maximum log(light) levels to use. Alternatively character value 'auto', that will allow FLightR to assign these values according to detected tag type.
 #' @param log.irrad.borders Numeric vector with length of 2 for minimum and maximum log(irradiance) values to use. Alternatively character value 'auto', that will allow FLightR to assign these values according to detected tag type.
 #' @param saves character values informing FLightR if min or max values were used by logger.
 #' @param measurement.period Value in seconds defining how often tag was measuring light levels. If NULL value will be taken from known values for detected tag type.
-#' @param impute.on.boundaries logical, if FLightR should approximate valeues at boundaries. Set it to TRUE only if you have vary few active poitns at each twilight, e.g if tag was saving every 10 minutes or so.
-#' @return list, which is to be further processed with the FlightR.
+#' @param impute.on.boundaries logical, if FLightR should approximate values at boundaries. Set it to TRUE only if you have vary few active points at each twilight, e.g if tag was saving every 10 minutes or so.
+#' @return list, which is to be further processed with the FLightR.
 #' @details The returned object has many parts, the important are: (1) the recorded light data, (2) the detected twilight events, (3) light level data at the moment of each determined sunrise and sunset and around them (24 fixes before and 24 after), and (4) technical parameters of the tag, i. e. its type, saving and measuring period (the periodicity, in seconds, at which a tag measures and saves data).
 #' @examples
 #' File<-system.file("extdata", "Godwit_TAGS_format.csv", package = "FLightR")
@@ -97,13 +97,13 @@ get.tag.type<-function(TAGS.twilights) {
 
    Max_light<-max(TAGS.twilights$light)
    recognized<-FALSE
-   if(round(Max_light,2)==11.22) {
+   if(round(Max_light,2) %in% c(11.22, 11.15, 10.93)) {
       tagtype<-"Intigeo_Mode_1"
       log_transformed<-TRUE
 	  recognized<-TRUE
    }
    
-   if (round(Max_light/10)==7442) {
+   if (round(Max_light/10) %in% c(7442, 6977, 5582)) {
      tagtype<-"Intigeo_Mode_1"
 	 log_transformed<-FALSE
      recognized<-TRUE
@@ -276,8 +276,8 @@ All.p<-Data[order(Data$gmt),]
 #All.p<-All.p[!duplicated(All.p[,2:3], fromLast=TRUE),]
 rownames(All.p)<-1:nrow(All.p)
 Filtered_tw$excluded=0
-FlightR.data=list(Data=All.p, twilights=Filtered_tw)
-return(FlightR.data)
+FLightR.data=list(Data=All.p, twilights=Filtered_tw)
+return(FLightR.data)
 
 }
 

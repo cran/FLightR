@@ -20,9 +20,11 @@
 #' @author Eldar Rakhimberdiev & Simeon Lisovski
 #' @export
 BAStag2TAGS <- function(raw, twl, threshold, filename=NULL) {
+  if (any(is.na(c(twl[,1], twl[,2])))) stop('NA detected in twl, check what went wrong there!')
   names(raw) <- c("Twilight", "Light")
   twl$Light <- threshold
-  
+  if (!'POSIXct' %in% class(twl$Twilight)) stop ('Twilight column in twl object should have POSIX format!')
+
   tmp01 <- merge(raw, twl, all.y = TRUE, all.x = TRUE)
   out <- data.frame(datetime = tmp01[,1], light = tmp01[,2],
                     twilight = ifelse(tmp01$Rise==TRUE & !is.na(tmp01$Rise), 1,
@@ -59,6 +61,9 @@ BAStag2TAGS <- function(raw, twl, threshold, filename=NULL) {
 #' @author Eldar Rakhimberdiev & Simeon Lisovski
 #' @export
 twGeos2TAGS <- function(raw, twl, threshold, filename=NULL) {
+  if (any(is.na(c(twl[,1], twl[,2])))) stop('NA detected in twl, check what went wrong there!')
+  if (!'POSIXct' %in% class(twl$Twilight)) stop ('Twilight column in twl object should have POSIX format!')
+
   names(raw) <- c("Twilight", "Light")
   twl$Light <- threshold
   
@@ -79,7 +84,7 @@ twGeos2TAGS <- function(raw, twl, threshold, filename=NULL) {
 
 #' Function to write down twilights annotated in GeoLight package data in so-called TAGS format
 #'
-#' this function converts combines twilights detected in BAStag ot twGeos with raw data and writes them down in TAGS format that can be easily read by \code{\link{get.tags.data}}
+#' this function converts combines twilights detected in BAStag to twGeos with raw data and writes them down in TAGS format that can be easily read by \code{\link{get.tags.data}}
 #' @param raw original data - dataframe with two columns first column must contain time and second measured light levels
 #' @param gl_twl twilights object from GeoLight
 #' @param threshold threshold value used for twilight definition in GeoLight
@@ -99,6 +104,7 @@ twGeos2TAGS <- function(raw, twl, threshold, filename=NULL) {
 #' @author Eldar Rakhimberdiev & Simeon Lisovski
 #' @export
 GeoLight2TAGS<-function (raw, gl_twl, threshold, filename=NULL) {
+   if (any(is.na(c(gl_twl[,1], gl_twl[,2])))) stop('NA detected in gl_twl, check what went wrong there!')
    names(raw) <- c("datetime", "light")
    raw$twilight<-0
    twl <- data.frame(datetime = as.POSIXct(c(gl_twl$tFirst, 

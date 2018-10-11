@@ -19,7 +19,7 @@ GeoLight2TAGS(raw, gl_twl, threshold, filename = NULL)
 \code{NULL} if \code{filename} is provided or TAGS formatted dataframe.
 }
 \description{
-this function converts combines twilights detected in BAStag ot twGeos with raw data and writes them down in TAGS format that can be easily read by \code{\link{get.tags.data}}
+this function converts combines twilights detected in BAStag to twGeos with raw data and writes them down in TAGS format that can be easily read by \code{\link{get.tags.data}}
 }
 \details{
 TAGS format returned or written as .csv by this function is a dataframe with columns
@@ -32,10 +32,9 @@ TAGS format returned or written as .csv by this function is a dataframe with col
  }
 The fields \code{excluded} and \code{interp} may have values of \code{TRUE} only for \code{twilight > 0}.
 }
-\author{
-Eldar Rakhimberdiev & Simeon Lisovski
-}
 \seealso{
 \code{\link{twGeos2TAGS}} and \code{\link{BAStag2TAGS}}
 }
-
+\author{
+Eldar Rakhimberdiev & Simeon Lisovski
+}

@@ -9,9 +9,9 @@ plot_likelihood(object, date = NULL, twilight.index = NULL)
 \arguments{
 \item{object}{either output from \code{\link{make.prerun.object}} or \code{\link{run.particle.filter}}}
 
-\item{date}{either NULL or a date (possibly with time) closest to the twilight you wan tto be plotted}
+\item{date}{either NULL or a date (possibly with time) closest to the twilight you wan to be plotted}
 
-\item{twilight.index}{number of likelohood surface to be plotted}
+\item{twilight.index}{number of likelihood surface to be plotted}
 }
 \description{
 plots specific likelihood surface over map
@@ -46,4 +46,3 @@ plot_likelihood(all.in, twilight.index=10)
 \author{
 Eldar Rakhimberdiev
 }
-

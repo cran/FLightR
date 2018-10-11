@@ -4,7 +4,7 @@
 
 <head>
 
-<meta charset="utf-8">
+<meta charset="utf-8" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 
@@ -12,7 +12,7 @@
 
 <meta name="author" content="Eldar Rakhimberdiev &amp; Julia Karagicheva" />
 
-<meta name="date" content="2017-03-14" />
+<meta name="date" content="2018-10-11" />
 
 <title>FLightR with black-tailed godwit vignette from MEE 2017</title>
 
@@ -20,28 +20,256 @@
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
-table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
-  margin: 0; padding: 0; vertical-align: baseline; border: none; }
-table.sourceCode { width: 100%; line-height: 100%; }
-td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
-td.sourceCode { padding-left: 5px; }
-code > span.kw { color: #007020; font-weight: bold; }
-code > span.dt { color: #902000; }
-code > span.dv { color: #40a070; }
-code > span.bn { color: #40a070; }
-code > span.fl { color: #40a070; }
-code > span.ch { color: #4070a0; }
-code > span.st { color: #4070a0; }
-code > span.co { color: #60a0b0; font-style: italic; }
-code > span.ot { color: #007020; }
-code > span.al { color: #ff0000; font-weight: bold; }
-code > span.fu { color: #06287e; }
-code > span.er { color: #ff0000; font-weight: bold; }
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; position: absolute; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; }
+pre.numberSource a.sourceLine:empty
+  { position: absolute; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: absolute; left: -5em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
 
 
 
-<link href="data:text/css,body%20%7B%0A%20%20background%2Dcolor%3A%20%23fff%3B%0A%20%20margin%3A%201em%20auto%3B%0A%20%20max%2Dwidth%3A%20700px%3B%0A%20%20overflow%3A%20visible%3B%0A%20%20padding%2Dleft%3A%202em%3B%0A%20%20padding%2Dright%3A%202em%3B%0A%20%20font%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0A%20%20font%2Dsize%3A%2014px%3B%0A%20%20line%2Dheight%3A%201%2E35%3B%0A%7D%0A%0A%23header%20%7B%0A%20%20text%2Dalign%3A%20center%3B%0A%7D%0A%0A%23TOC%20%7B%0A%20%20clear%3A%20both%3B%0A%20%20margin%3A%200%200%2010px%2010px%3B%0A%20%20padding%3A%204px%3B%0A%20%20width%3A%20400px%3B%0A%20%20border%3A%201px%20solid%20%23CCCCCC%3B%0A%20%20border%2Dradius%3A%205px%3B%0A%0A%20%20background%2Dcolor%3A%20%23f6f6f6%3B%0A%20%20font%2Dsize%3A%2013px%3B%0A%20%20line%2Dheight%3A%201%2E3%3B%0A%7D%0A%20%20%23TOC%20%2Etoctitle%20%7B%0A%20%20%20%20font%2Dweight%3A%20bold%3B%0A%20%20%20%20font%2Dsize%3A%2015px%3B%0A%20%20%20%20margin%2Dleft%3A%205px%3B%0A%20%20%7D%0A%0A%20%20%23TOC%20ul%20%7B%0A%20%20%20%20padding%2Dleft%3A%2040px%3B%0A%20%20%20%20margin%2Dleft%3A%20%2D1%2E5em%3B%0A%20%20%20%20margin%2Dtop%3A%205px%3B%0A%20%20%20%20margin%2Dbottom%3A%205px%3B%0A%20%20%7D%0A%20%20%23TOC%20ul%20ul%20%7B%0A%20%20%20%20margin%2Dleft%3A%20%2D2em%3B%0A%20%20%7D%0A%20%20%23TOC%20li%20%7B%0A%20%20%20%20line%2Dheight%3A%2016px%3B%0A%20%20%7D%0A%0Atable%20%7B%0A%20%20margin%3A%201em%20auto%3B%0A%20%20border%2Dwidth%3A%201px%3B%0A%20%20border%2Dcolor%3A%20%23DDDDDD%3B%0A%20%20border%2Dstyle%3A%20outset%3B%0A%20%20border%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0A%20%20border%2Dwidth%3A%202px%3B%0A%20%20padding%3A%205px%3B%0A%20%20border%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0A%20%20border%2Dwidth%3A%201px%3B%0A%20%20border%2Dstyle%3A%20inset%3B%0A%20%20line%2Dheight%3A%2018px%3B%0A%20%20padding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0A%20%20border%2Dleft%2Dstyle%3A%20none%3B%0A%20%20border%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0A%20%20background%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0A%0Ap%20%7B%0A%20%20margin%3A%200%2E5em%200%3B%0A%7D%0A%0Ablockquote%20%7B%0A%20%20background%2Dcolor%3A%20%23f6f6f6%3B%0A%20%20padding%3A%200%2E25em%200%2E75em%3B%0A%7D%0A%0Ahr%20%7B%0A%20%20border%2Dstyle%3A%20solid%3B%0A%20%20border%3A%20none%3B%0A%20%20border%2Dtop%3A%201px%20solid%20%23777%3B%0A%20%20margin%3A%2028px%200%3B%0A%7D%0A%0Adl%20%7B%0A%20%20margin%2Dleft%3A%200%3B%0A%7D%0A%20%20dl%20dd%20%7B%0A%20%20%20%20margin%2Dbottom%3A%2013px%3B%0A%20%20%20%20margin%2Dleft%3A%2013px%3B%0A%20%20%7D%0A%20%20dl%20dt%20%7B%0A%20%20%20%20font%2Dweight%3A%20bold%3B%0A%20%20%7D%0A%0Aul%20%7B%0A%20%20margin%2Dtop%3A%200%3B%0A%7D%0A%20%20ul%20li%20%7B%0A%20%20%20%20list%2Dstyle%3A%20circle%20outside%3B%0A%20%20%7D%0A%20%20ul%20ul%20%7B%0A%20%20%20%20margin%2Dbottom%3A%200%3B%0A%20%20%7D%0A%0Apre%2C%20code%20%7B%0A%20%20background%2Dcolor%3A%20%23f7f7f7%3B%0A%20%20border%2Dradius%3A%203px%3B%0A%20%20color%3A%20%23333%3B%0A%20%20white%2Dspace%3A%20pre%2Dwrap%3B%20%20%20%20%2F%2A%20Wrap%20long%20lines%20%2A%2F%0A%7D%0Apre%20%7B%0A%20%20border%2Dradius%3A%203px%3B%0A%20%20margin%3A%205px%200px%2010px%200px%3B%0A%20%20padding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0A%20%20background%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0A%0Acode%20%7B%0A%20%20font%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0A%20%20font%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0A%20%20padding%3A%202px%200px%3B%0A%7D%0A%0Adiv%2Efigure%20%7B%0A%20%20text%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0A%20%20background%2Dcolor%3A%20%23FFFFFF%3B%0A%20%20padding%3A%202px%3B%0A%20%20border%3A%201px%20solid%20%23DDDDDD%3B%0A%20%20border%2Dradius%3A%203px%3B%0A%20%20border%3A%201px%20solid%20%23CCCCCC%3B%0A%20%20margin%3A%200%205px%3B%0A%7D%0A%0Ah1%20%7B%0A%20%20margin%2Dtop%3A%200%3B%0A%20%20font%2Dsize%3A%2035px%3B%0A%20%20line%2Dheight%3A%2040px%3B%0A%7D%0A%0Ah2%20%7B%0A%20%20border%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0A%20%20padding%2Dtop%3A%2010px%3B%0A%20%20padding%2Dbottom%3A%202px%3B%0A%20%20font%2Dsize%3A%20145%25%3B%0A%7D%0A%0Ah3%20%7B%0A%20%20border%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0A%20%20padding%2Dtop%3A%2010px%3B%0A%20%20font%2Dsize%3A%20120%25%3B%0A%7D%0A%0Ah4%20%7B%0A%20%20border%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0A%20%20margin%2Dleft%3A%208px%3B%0A%20%20font%2Dsize%3A%20105%25%3B%0A%7D%0A%0Ah5%2C%20h6%20%7B%0A%20%20border%2Dbottom%3A%201px%20solid%20%23ccc%3B%0A%20%20font%2Dsize%3A%20105%25%3B%0A%7D%0A%0Aa%20%7B%0A%20%20color%3A%20%230033dd%3B%0A%20%20text%2Ddecoration%3A%20none%3B%0A%7D%0A%20%20a%3Ahover%20%7B%0A%20%20%20%20color%3A%20%236666ff%3B%20%7D%0A%20%20a%3Avisited%20%7B%0A%20%20%20%20color%3A%20%23800080%3B%20%7D%0A%20%20a%3Avisited%3Ahover%20%7B%0A%20%20%20%20color%3A%20%23BB00BB%3B%20%7D%0A%20%20a%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0A%20%20%20%20text%2Ddecoration%3A%20underline%3B%20%7D%0A%20%20a%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0A%20%20%20%20text%2Ddecoration%3A%20underline%3B%20%7D%0A%0A%2F%2A%20Class%20described%20in%20https%3A%2F%2Fbenjeffrey%2Ecom%2Fposts%2Fpandoc%2Dsyntax%2Dhighlighting%2Dcss%0A%20%20%20Colours%20from%20https%3A%2F%2Fgist%2Egithub%2Ecom%2Frobsimmons%2F1172277%20%2A%2F%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%2F%2A%20Keyword%20%2A%2F%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%2F%2A%20DataType%20%2A%2F%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%2F%2A%20DecVal%20%28decimal%20values%29%20%2A%2F%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%2F%2A%20BaseN%20%2A%2F%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%2F%2A%20Float%20%2A%2F%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%2F%2A%20Char%20%2A%2F%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%2F%2A%20String%20%2A%2F%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%2F%2A%20Comment%20%2A%2F%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%2F%2A%20OtherToken%20%2A%2F%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%2F%2A%20AlertToken%20%2A%2F%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%2F%2A%20Function%20calls%20%2A%2F%20%0Acode%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%2F%2A%20ErrorTok%20%2A%2F%0A%0A" rel="stylesheet" type="text/css" />
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#header {
+text-align: center;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
 
 </head>
 
@@ -52,7 +280,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 
 <h1 class="title toc-ignore">FLightR with black-tailed godwit vignette from MEE 2017</h1>
 <h4 class="author"><em>Eldar Rakhimberdiev &amp; Julia Karagicheva</em></h4>
-<h4 class="date"><em>2017-03-14</em></h4>
+<h4 class="date"><em>2018-10-11</em></h4>
 
 
 
@@ -62,30 +290,30 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <div id="install-package" class="section level2">
 <h2>Install package</h2>
 <p>Note that we used FLightR 0.4.5 version, and running this example in later versions may provide somehow different results. To install the latest CRAN version try</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install.packages</span>(<span class="st">'FLightR'</span>)</code></pre>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">install.packages</span>(<span class="st">'FLightR'</span>)</a></code></pre></div>
 <p>To run version 0.4.5 which we use in this example try</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(devtools)
-<span class="kw">install_github</span>(<span class="st">'eldarrak/FLightR@0.4.5'</span>)</code></pre>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw">library</span>(devtools)</a>
+<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="kw">install_github</span>(<span class="st">'eldarrak/FLightR@0.4.5'</span>)</a></code></pre></div>
 <p>The latest version is available here:</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install_github</span>(<span class="st">'eldarrak/FLightR'</span>)</code></pre>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw">install_github</span>(<span class="st">'eldarrak/FLightR'</span>)</a></code></pre></div>
 <p>Load package</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(FLightR)</code></pre>
-<pre><code>## This is FLightR 0.4.6
-##  NB: All functions that started from plot.**.**() are renamed to plot_**_** in order to pass CRAN check</code></pre>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="kw">library</span>(FLightR)</a></code></pre></div>
+<pre><code>## This is FLightR 0.4.7
+##  Note that for use of plotting functions relying on google maps you should get the Google maps api key</code></pre>
 </div>
 <div id="data-preparation-and-import" class="section level2">
 <h2>1. Data preparation and import</h2>
-<p>The procedure of the definition of the twilight events, i. e. sunrises and sunsets, is not implemented in FLightR. Please, use appropriate functions in other R packages, e.g. BAStag, twGeos or GeoLight <a href="#lisovski_2012a">Lisovski et al. 2012a</a>, or online service <a href="http://tags.animalmigration.org" class="uri">http://tags.animalmigration.org</a> for this purpose. In this software, user guides semi-automatically search for the twilight times and then visually explores the light data, manually removing twilights defined apparently wrong or around which the light pattern is atypical or systematically biased, e.g. when a bird enters or exits a cavity during twilight (<a href="#rakhimberidev_jab_2016">Rakhimberdiev et al. 2016</a>). An example of the routine for the twilight definition in BAStag is available as <a href="https://github.com/eldarrak/FLightR/blob/master/examples/Black-Tailed_Godwit_JAB_example/A4_BAStag_routine.Rmd">appendix A4</a> to <a href="#rakhimberdiev_jab_2016">Rakhimberdiev et al. 2016</a>.</p>
+<p>The procedure of the definition of the twilight events, i. e. sunrises and sunsets, is not implemented in FLightR. Please, use appropriate functions in other R packages, e.g. BAStag, twGeos or GeoLight <a href="#lisovski_2012a">Lisovski et al. 2012a</a>. In this software, user guides semi-automatically search for the twilight times and then visually explores the light data, manually removing twilights defined apparently wrong or around which the light pattern is atypical or systematically biased, e.g. when a bird enters or exits a cavity during twilight (<a href="#rakhimberidev_jab_2016">Rakhimberdiev et al. 2016</a>). An example of the routine for the twilight definition in BAStag is available as <a href="https://github.com/eldarrak/FLightR/blob/master/examples/Black-Tailed_Godwit_JAB_example/A4_BAStag_routine.Rmd">appendix A4</a> to <a href="#rakhimberdiev_jab_2016">Rakhimberdiev et al. 2016</a>.</p>
 <p>FLightR works with the ‘TAGS’ format, which is an agreed general annotation of twilight data by National Centre for Ecological Analysis and Synthesis working group ‘Establishing an open-source animal-tracking analysis platform for archival geolocators <a href="https://www.nceas.ucsb.edu/featured/bridge" class="uri">https://www.nceas.ucsb.edu/featured/bridge</a>. A TAGS file is a CSV file containing the following fields:</p>
 <ul>
 <li><code>datetime</code> – date and time in ISO 8601 format e.g. 2013-06-16T00:00:11.000Z;</li>
 <li><code>light</code> – light value measured by tag;</li>
 <li><code>twilight</code> – assigned by the software numeric indication of whether the record belongs to sunrise (1), sunset (2) or none of those (0);</li>
 <li><code>excluded</code> – indication of whether a twilight was excluded during manual inspection (logical, <code>TRUE | FALSE</code>);</li>
-<li><code>interp</code> - indication of whether the light value at twilight was interpolated (logical, <code>TRUE | FALSE</code>). The fields <code>excluded</code> and <code>interp</code> may have values of <code>TRUE</code> only for <code>twilight &gt; 0</code>. The online service <a href="http://tags.animalmigration.org" class="uri">http://tags.animalmigration.org</a> saves data in the TAGS forma. In the R packages GeoLight and BAStag or twGeos, the annotated twilight data need to be exported to TAGS, for which the functions in the FLightR (<code>GeoLight2TAGS</code>, <code>BAStag2TAGS</code> or <code>twGeos2TAGS</code>) can be used.</li>
+<li><code>interp</code> - indication of whether the light value at twilight was interpolated (logical, <code>TRUE | FALSE</code>). The fields <code>excluded</code> and <code>interp</code> may have values of <code>TRUE</code> only for <code>twilight &gt; 0</code>. The online TAGS service saves data in the TAGS format. In the R packages GeoLight and BAStag or twGeos, the annotated twilight data need to be exported to TAGS, for which the functions in the FLightR (<code>GeoLight2TAGS</code>, <code>BAStag2TAGS</code> or <code>twGeos2TAGS</code>) can be used.</li>
 </ul>
-<p>We will use the TAGS formatted data provided as appendix A3 to <a href="#rakhimberdiev_jab_2016">Rakhimberdiev et al. 2016</a> also available on the authors’ GitHub page:</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">download.file</span>(<span class="st">'https://git.io/vrJgv'</span>, <span class="st">'example_TAGS_format.csv'</span>)</code></pre>
+<p>We will use the TAGS formatted data provided as appendix A3 to <a href="#rakhimberdiev_jab_2016">Rakhimberdiev et al. 2016</a> also available on the authors’ GitHub page:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="kw">download.file</span>(<span class="st">'https://git.io/vrJgv'</span>, <span class="st">'example_TAGS_format.csv'</span>)</a></code></pre></div>
 <p>The function <code>get.tags.data</code> reads comma separated file in the TAGS format, detects the tag type, checks whether the light data are log-transformed, transforms them back from the log scale if needed and creates an object, containing</p>
 <ol style="list-style-type: decimal">
 <li>the recorded light data,</li>
@@ -94,96 +322,96 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <li>technical parameters of the tag, added automatically, unless preset by the user.</li>
 </ol>
 <p>The finction works with all the common tag types: mk tags (produced by British Antarctic Survey, Lotek, and Migrate Technology Ltd.), Intigeo tags (Migrate technology Ltd.) and GDL tags (Swiss Ornithological Institute).</p>
-<pre class="sourceCode r"><code class="sourceCode r">Proc.data&lt;-<span class="kw">get.tags.data</span>(<span class="st">&quot;example_TAGS_format.csv&quot;</span>)</code></pre>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">Proc.data&lt;-<span class="kw">get.tags.data</span>(<span class="st">&quot;example_TAGS_format.csv&quot;</span>)</a></code></pre></div>
 </div>
 <div id="calibration" class="section level2">
 <h2>2. Calibration</h2>
-<p>Geolocators measure light levels with different precision, and calibration is needed to establish the relationship between the observed and the expected light levels for each device. This relationship is depicted by the calibration parameters (slopes), calculated using the data recorded in known (calibration) geographic positions, e. g. where the animal was tagged, recaptured or observed. FLightR uses a ‘template fit’ for calibration <a href="#ekstrom_2004">Ekstrom 2004, 2007</a>. For each tag it finds the linear (on a log-log scale) relationship between the light levels measured in known locations and the theoretical light levels, estimated from current sun angle in these locations with the deterministic equation developed by Ekstrom <a href="#rakhimberdiev_movecol_2015">Rakhimberdiev et al. 2015</a>.</p>
+<p>Geolocators measure light levels with different precision, and calibration is needed to establish the relationship between the observed and the expected light levels for each device. This relationship is depicted by the calibration parameters (slopes), calculated using the data recorded in known (calibration) geographic positions, e. g. where the animal was tagged, recaptured or observed. FLightR uses a ‘template fit’ for calibration <a href="#ekstrom_2004">Ekstrom 2004, 2007</a>. For each tag it finds the linear (on a log-log scale) relationship between the light levels measured in known locations and the theoretical light levels, estimated from current sun angle in these locations with the deterministic equation developed by Ekstrom <a href="#rakhimberdiev_movecol_2015">Rakhimberdiev et al. 2015</a>.</p>
 <p>To calculate the calibration parameters user needs to create a data frame where the geographic coordinates of the calibration location, and the start and end dates of the calibration period, i. e. the period of residence in the known location, are specified: * <code>calibration.start</code> (POSIXct format) * <code>calibration.stop</code> (POSIXct format) * <code>lon</code> (numeric) * <code>lat</code> (numeric) The data frame contains as many rows as many distinct calibration periods the track contains.</p>
-<pre class="sourceCode r"><code class="sourceCode r">Calibration.periods&lt;-<span class="kw">data.frame</span>(
-        <span class="dt">calibration.start=</span><span class="kw">as.POSIXct</span>(<span class="kw">c</span>(<span class="ot">NA</span>, <span class="st">&quot;2014-05-05&quot;</span>)),
-        <span class="dt">calibration.stop=</span><span class="kw">as.POSIXct</span>(<span class="kw">c</span>(<span class="st">&quot;2013-08-20&quot;</span>, <span class="ot">NA</span>)),
-        <span class="dt">lon=</span><span class="fl">5.43</span>, <span class="dt">lat=</span><span class="fl">52.93</span>) 
-        <span class="co">#use c() also for the geographic coordinates, </span>
-        <span class="co">#if you have more than one calibration location</span>
-        <span class="co"># (e. g.,  lon=c(5.43, 6.00), lat=c(52.93,52.94))</span>
-<span class="kw">print</span>(Calibration.periods)</code></pre>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">Calibration.periods&lt;-<span class="kw">data.frame</span>(</a>
+<a class="sourceLine" id="cb8-2" data-line-number="2">        <span class="dt">calibration.start=</span><span class="kw">as.POSIXct</span>(<span class="kw">c</span>(<span class="ot">NA</span>, <span class="st">&quot;2014-05-05&quot;</span>)),</a>
+<a class="sourceLine" id="cb8-3" data-line-number="3">        <span class="dt">calibration.stop=</span><span class="kw">as.POSIXct</span>(<span class="kw">c</span>(<span class="st">&quot;2013-08-20&quot;</span>, <span class="ot">NA</span>)),</a>
+<a class="sourceLine" id="cb8-4" data-line-number="4">        <span class="dt">lon=</span><span class="fl">5.43</span>, <span class="dt">lat=</span><span class="fl">52.93</span>) </a>
+<a class="sourceLine" id="cb8-5" data-line-number="5">        <span class="co">#use c() also for the geographic coordinates, </span></a>
+<a class="sourceLine" id="cb8-6" data-line-number="6">        <span class="co">#if you have more than one calibration location</span></a>
+<a class="sourceLine" id="cb8-7" data-line-number="7">        <span class="co"># (e. g.,  lon=c(5.43, 6.00), lat=c(52.93,52.94))</span></a>
+<a class="sourceLine" id="cb8-8" data-line-number="8"><span class="kw">print</span>(Calibration.periods)</a></code></pre></div>
 <p>In this example, we have two calibration periods in the same location, at the beginning and at the end of the track. This is a common case, as the birds are often recaptured at the same location, where they were tagged.</p>
 <p>When multiple calibration locations are available, each of them has to be processed with the function <code>plot_slopes_by_location</code>. In this case, in the <code>Calibration periods</code> data frame, each row should refer to one calibration period. Compiling the data frame with multiple calibration locations, use <code>c()</code> also for the geographic coordinates (e. g., <code>lon=c(5.43, 6.00), lat=c(52.93,52.94)</code>).</p>
 <p>A ‘Calibration’ object is compiled with the function<code>make.calibration</code> from the created <code>Calibration periods</code> data frame and the <code>Proc.data</code> object.</p>
-<pre class="sourceCode r"><code class="sourceCode r">Calibration&lt;-<span class="kw">make.calibration</span>(Proc.data, Calibration.periods)</code></pre>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1">Calibration&lt;-<span class="kw">make.calibration</span>(Proc.data, Calibration.periods)</a></code></pre></div>
 <p>This object contains all the calibration parameters for the tag, and it will be further used for calculation of geographic positions across the track. When there are more than one calibration periods, the parameter <code>model.ageing</code> can be set <code>TRUE</code> to account for the tag ageing. In this case, the calibration parameters are calculated, based on the assumption that the calibration slope changes linearly with time.</p>
 <div id="find-calibration-periods-for-a-known-calibration-location" class="section level3">
 <h3>Find calibration periods for a known calibration location</h3>
 <p>The exact period of a tagged animal’s stay in a known location is usually unknown, but it can be derived from the data. For this, calibration slopes for the sunset and sunrise of each day of the tracking period are calculated, based on the assumption that the tag remained in the same known position all the time. The slopes are calculated and plotted with the function <code>plot_slopes_by_location</code>.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot_slopes_by_location</span>(<span class="dt">Proc.data=</span>Proc.data, <span class="dt">location=</span><span class="kw">c</span>(<span class="fl">5.43</span>, <span class="fl">52.93</span>))</code></pre>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="kw">plot_slopes_by_location</span>(<span class="dt">Proc.data=</span>Proc.data, <span class="dt">location=</span><span class="kw">c</span>(<span class="fl">5.43</span>, <span class="fl">52.93</span>))</a></code></pre></div>
 <p>Looking at the plot, we can define the time periods, during which the tag resided in the calibration location (recall, that we assume that the tag remained in this location all the time). Because calibration slopes reflect the adequacy of the light level measured by the device, they vary little, in time and between sunsets and sunrises, as long as the tagged animal stays in the calibration location, but become apparently diverse, when it moves away from it. Both patterns are clearly distinguishable at the plot.</p>
 <p>Play with <code>abline()</code> to find the proper boundaries for the calibration.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">abline</span>(<span class="dt">v=</span><span class="kw">as.POSIXct</span>(<span class="st">&quot;2013-08-20&quot;</span>)) <span class="co"># end of first calibration period</span>
-<span class="kw">abline</span>(<span class="dt">v=</span><span class="kw">as.POSIXct</span>(<span class="st">&quot;2014-05-05&quot;</span>)) <span class="co"># start of the second calibration period</span></code></pre>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="kw">abline</span>(<span class="dt">v=</span><span class="kw">as.POSIXct</span>(<span class="st">&quot;2013-08-20&quot;</span>)) <span class="co"># end of first calibration period</span></a>
+<a class="sourceLine" id="cb11-2" data-line-number="2"><span class="kw">abline</span>(<span class="dt">v=</span><span class="kw">as.POSIXct</span>(<span class="st">&quot;2014-05-05&quot;</span>)) <span class="co"># start of the second calibration period</span></a></code></pre></div>
 </div>
 <div id="find-a-calibration-location-for-a-known-calibration-period" class="section level3">
 <h3>Find a calibration location for a known calibration period</h3>
-<p>It may happen that an animal was tagged in the High Arctic under polar day conditions or that it moved far away from the capture site immedialtly after tagging and the roof-top calibration data are not available. Even in such cases it is still possibe to obtain calibration parameters for a resident period at unknown location. FLightR approach to this problem is similar to Hill-Ekstrom calibration [ <a href="#lisovski_2012b">Lisovski et al. 2012b</a> implemented in GeoLight <a href="#lisovski_2012a">Lisovksi et al. 2012a</a>. If bird is assumed to be resident at some period one can try:</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># ~ 15 min run time</span>
-Location&lt;-<span class="kw">find.stationary.location</span>(Proc.data, <span class="st">'2013-07-20'</span>, <span class="st">'2013-08-20'</span>,
-                                   <span class="dt">initial.coords=</span><span class="kw">c</span>(<span class="dv">10</span>, <span class="dv">50</span>))</code></pre>
+<p>It may happen that an animal was tagged in the High Arctic under polar day conditions or that it moved far away from the capture site immedialtly after tagging and the roof-top calibration data are not available. Even in such cases it is still possibe to obtain calibration parameters for a resident period at unknown location. FLightR approach to this problem is similar to Hill-Ekstrom calibration [ <a href="#lisovski_2012b">Lisovski et al. 2012b</a> implemented in GeoLight <a href="#lisovski_2012a">Lisovksi et al. 2012a</a>. If bird is assumed to be resident at some period one can try:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1"><span class="co"># ~ 15 min run time</span></a>
+<a class="sourceLine" id="cb12-2" data-line-number="2">Location&lt;-<span class="kw">find.stationary.location</span>(Proc.data, <span class="st">'2013-07-20'</span>, <span class="st">'2013-08-20'</span>,</a>
+<a class="sourceLine" id="cb12-3" data-line-number="3">                                   <span class="dt">initial.coords=</span><span class="kw">c</span>(<span class="dv">10</span>, <span class="dv">50</span>))</a></code></pre></div>
 <p>The function will return geographic coordinates of the location for which the range of errors in slopes is minimal. User has to provide the initial coordinates, which should be within a few thousand kilometers from the hypothetical real location.</p>
 </div>
 </div>
 <div id="assign-spatial-extent" class="section level2">
 <h2>3. Assign spatial extent</h2>
 <p>The function <code>make.grid</code> sets up a spatial grid (50 X 50 km on default) delimited by user-defined boundaries: <code>left</code>, <code>right</code>. <code>bottom</code> and <code>top</code>. When the tagged animal cannot occur or stay between two subsequent twilights over particular areas, e.g. open water for a landbird or deep inland for a marine animal, additional parameters <code>distance.from.land.allowed.to.use</code> and <code>distance.from.land.allowed.to.stay</code> can be specified. Each of the parameters require a vector of two numbers: the minimal and the maximal distances (in km) from shoreline, at which the animal is allowed to occur/stay.</p>
-<pre class="sourceCode r"><code class="sourceCode r">Grid&lt;-<span class="kw">make.grid</span>(<span class="dt">left=</span>-<span class="dv">14</span>, <span class="dt">bottom=</span><span class="dv">30</span>, <span class="dt">right=</span><span class="dv">13</span>, <span class="dt">top=</span><span class="dv">57</span>,
-   <span class="dt">distance.from.land.allowed.to.use=</span><span class="kw">c</span>(-<span class="ot">Inf</span>, <span class="ot">Inf</span>),
-   <span class="dt">distance.from.land.allowed.to.stay=</span><span class="kw">c</span>(-<span class="ot">Inf</span>, <span class="ot">Inf</span>))</code></pre>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1">Grid&lt;-<span class="kw">make.grid</span>(<span class="dt">left=</span><span class="op">-</span><span class="dv">14</span>, <span class="dt">bottom=</span><span class="dv">30</span>, <span class="dt">right=</span><span class="dv">13</span>, <span class="dt">top=</span><span class="dv">57</span>,</a>
+<a class="sourceLine" id="cb13-2" data-line-number="2">   <span class="dt">distance.from.land.allowed.to.use=</span><span class="kw">c</span>(<span class="op">-</span><span class="ot">Inf</span>, <span class="ot">Inf</span>),</a>
+<a class="sourceLine" id="cb13-3" data-line-number="3">   <span class="dt">distance.from.land.allowed.to.stay=</span><span class="kw">c</span>(<span class="op">-</span><span class="ot">Inf</span>, <span class="ot">Inf</span>))</a></code></pre></div>
 <p>The resulting <code>Grid</code> is a matrix with the columns: <code>lon</code> (longitude), <code>lat</code> (latitude) and <code>Stay</code> (probability of stay). The grid cells, which the animal presumably cannot use, are excluded from the data, while the locations at which an animal cannot be stationary are given a low probability of stay. Using masks can side track model estimation to the local minima, and we recommend to initially run model without a mask, enable them for the second run and visually compare the results, to see if the model converges to a similar track.</p>
 </div>
 <div id="prepare-the-model-for-run" class="section level2">
 <h2>4. Prepare the model for run</h2>
 <p>The function <code>make.prerun.object</code> creates a complex object, which will be used in the main run. It incorporates all the objects, created at earlier steps: the light data with the detected twilight events (<code>Proc.data</code>), the spatial parameters (<code>Grid</code>), geographic coordinates of the initial location, where the tracking has started (<code>start</code>), and the calibration parameters (<code>Calibration</code>).</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># ~ 15 min run time</span>
-all.in&lt;-<span class="kw">make.prerun.object</span>(Proc.data, Grid, <span class="dt">start=</span><span class="kw">c</span>(<span class="fl">5.43</span>, <span class="fl">52.93</span>), <span class="dt">Calibration=</span>Calibration)</code></pre>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1"><span class="co"># ~ 15 min run time</span></a>
+<a class="sourceLine" id="cb14-2" data-line-number="2">all.in&lt;-<span class="kw">make.prerun.object</span>(Proc.data, Grid, <span class="dt">start=</span><span class="kw">c</span>(<span class="fl">5.43</span>, <span class="fl">52.93</span>), <span class="dt">Calibration=</span>Calibration)</a></code></pre></div>
 </div>
 <div id="particle-filter-run" class="section level2">
 <h2>5. Particle filter run</h2>
 <p>At this stage, the model output is generated. It contains: a table of positions at each twilight (<code>$Results$Quantiles</code>) and their statistics (mean, median values and credible intervals), a table of parameters of the movement model (<code>$Results$Movement.results</code>) and posterior distribution at every twilight (<code>$Results$Points.rle</code>) and at every transition between twilights (<code>$Results$Transitions.rle</code>). Within <code>run.particle.filter</code>, the following parameters can be defined: * <code>nParticles</code> - number of particles (1e4 is recommended for test and 1e6 for the analysis); * <code>threads</code> - amount of parallel threads to use for the run default is -1 that means all available except one; * <code>known.last</code> - TRUE if you know that in the end of the logging period tag occurred in a known place (FALSE is the default option); * <code>check.outliers</code> – FALSE by default. Set it TRUE if you wish on a fly outliers detection, we recommend to use it if the results have strong outliers.</p>
-<pre class="sourceCode r"><code class="sourceCode r">nParticles=<span class="fl">1e6</span>
-<span class="co"># ~ 45 min run time</span>
-Result&lt;-<span class="kw">run.particle.filter</span>(all.in, <span class="dt">threads=</span>-<span class="dv">1</span>,
-            <span class="dt">nParticles=</span>nParticles, <span class="dt">known.last=</span><span class="ot">TRUE</span>,
-            <span class="dt">precision.sd=</span><span class="dv">25</span>, <span class="dt">check.outliers=</span>F)
-<span class="kw">save</span>(Result, <span class="dt">file=</span><span class="st">&quot;Result.bltg.ageing.model.noOD.RData&quot;</span>)</code></pre>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1">nParticles=<span class="fl">1e6</span></a>
+<a class="sourceLine" id="cb15-2" data-line-number="2"><span class="co"># ~ 45 min run time</span></a>
+<a class="sourceLine" id="cb15-3" data-line-number="3">Result&lt;-<span class="kw">run.particle.filter</span>(all.in, <span class="dt">threads=</span><span class="op">-</span><span class="dv">1</span>,</a>
+<a class="sourceLine" id="cb15-4" data-line-number="4">            <span class="dt">nParticles=</span>nParticles, <span class="dt">known.last=</span><span class="ot">TRUE</span>,</a>
+<a class="sourceLine" id="cb15-5" data-line-number="5">            <span class="dt">precision.sd=</span><span class="dv">25</span>, <span class="dt">check.outliers=</span>F)</a>
+<a class="sourceLine" id="cb15-6" data-line-number="6"><span class="kw">save</span>(Result, <span class="dt">file=</span><span class="st">&quot;Result.bltg.ageing.model.noOD.RData&quot;</span>)</a></code></pre></div>
 <p>Now the results are saved in your work directory as an RData object.</p>
 </div>
 <div id="estimation-of-arrival-and-departure-dates" class="section level2">
 <h2>6. Estimation of arrival and departure dates</h2>
 <p>The function <code>find.times.distribution</code> derives the time at which an animal arrived or departed from the area and provides the measure of its uncertainty. First, select grid points of interest. For example in the current data we are interested in the date when our bird left the Netherlands. We will make a boundary at 2° longitude:</p>
-<pre class="sourceCode r"><code class="sourceCode r">Index&lt;-<span class="kw">which</span>(Result$Spatial$Grid[,<span class="dv">1</span>]&gt;(<span class="dv">2</span>))</code></pre>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1">Index&lt;-<span class="kw">which</span>(Result<span class="op">$</span>Spatial<span class="op">$</span>Grid[,<span class="dv">1</span>]<span class="op">&gt;</span>(<span class="dv">2</span>))</a></code></pre></div>
 <p>Estimate probabilities of occurrence within the area at each twilight:</p>
-<pre class="sourceCode r"><code class="sourceCode r">Arrivals.NL&lt;-<span class="kw">find.times.distribution</span>(Result,Index)
-Arrivals.NL</code></pre>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1">Arrivals.NL&lt;-<span class="kw">find.times.distribution</span>(Result,Index)</a>
+<a class="sourceLine" id="cb17-2" data-line-number="2">Arrivals.NL</a></code></pre></div>
 <p>Print a simple summary of the periods of residence and movement:</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">stationary.migration.summary</span>(Result, <span class="dt">prob.cutoff =</span> <span class="fl">0.1</span>, <span class="dt">min.stay =</span> <span class="dv">3</span>)</code></pre>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1"><span class="kw">stationary.migration.summary</span>(Result, <span class="dt">prob.cutoff =</span> <span class="fl">0.1</span>, <span class="dt">min.stay =</span> <span class="dv">3</span>)</a></code></pre></div>
 </div>
 <div id="visualisation-of-the-results" class="section level2">
 <h2>7. Visualisation of the results</h2>
 <div id="plot-a-simple-map" class="section level3">
 <h3>Plot a simple map</h3>
 <p>Plot a map with the most probable positions, i. e. combinations of the most probable latitude and longitude for each twilight:</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">map.FLightR.ggmap</span>(Result)</code></pre>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" data-line-number="1"><span class="kw">map.FLightR.ggmap</span>(Result)</a></code></pre></div>
 </div>
 <div id="plot-lon-lat-graph" class="section level3">
 <h3>Plot lon lat graph</h3>
 <p>Plot the estimated for each twilight probabilities of an animal to occur at particular latitude and longitude:</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot_lon_lat</span>(Result)</code></pre>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1"><span class="kw">plot_lon_lat</span>(Result)</a></code></pre></div>
 </div>
 <div id="plot-utilization-distribution" class="section level3">
 <h3>Plot utilization distribution</h3>
 <p>Plot space utilisation distribution for the wintering range:</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot_util_distr</span>(Result, 
-    <span class="dt">dates=</span><span class="kw">data.frame</span>(<span class="kw">as.POSIXct</span>(<span class="st">'2013-12-01'</span>), <span class="kw">as.POSIXct</span>(<span class="st">'2014-01-31'</span>)),
-    <span class="dt">add.scale.bar=</span><span class="ot">TRUE</span>, <span class="dt">percentiles=</span><span class="fl">0.5</span>)</code></pre>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" data-line-number="1"><span class="kw">plot_util_distr</span>(Result, </a>
+<a class="sourceLine" id="cb21-2" data-line-number="2">    <span class="dt">dates=</span><span class="kw">data.frame</span>(<span class="kw">as.POSIXct</span>(<span class="st">'2013-12-01'</span>), <span class="kw">as.POSIXct</span>(<span class="st">'2014-01-31'</span>)),</a>
+<a class="sourceLine" id="cb21-3" data-line-number="3">    <span class="dt">add.scale.bar=</span><span class="ot">TRUE</span>, <span class="dt">percentiles=</span><span class="fl">0.5</span>)</a></code></pre></div>
 </div>
 </div>
 <div id="references" class="section level2">
@@ -206,7 +434,7 @@ Arrivals.NL</code></pre>
   (function () {
     var script = document.createElement("script");
     script.type = "text/javascript";
-    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
     document.getElementsByTagName("head")[0].appendChild(script);
   })();
 </script>

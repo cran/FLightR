@@ -10,7 +10,7 @@ get.tags.data(filename = NULL, start.date = NULL, end.date = NULL,
   impute.on.boundaries = FALSE)
 }
 \arguments{
-\item{filename}{the name of the file which the data are to be read from. File is supposed ot be comma separated file of TAGS format. If it does not contain an absolute path, the file name is relative to the current working directory, getwd(). Tilde-expansion is performed where supported. This can be a compressed file (see \code{\link[base]{file}}). Alternatively, file can be a readable text-mode connection (which will be opened for reading if necessary, and if so closed (and hence destroyed) at the end of the function call). File can also be a complete URL. For the supported URL schemes, see help for \code{\link[base]{url}}.}
+\item{filename}{the name of the file which the data are to be read from. File is supposed to be comma separated file of TAGS format. If it does not contain an absolute path, the file name is relative to the current working directory, getwd(). Tilde-expansion is performed where supported. This can be a compressed file (see \code{\link[base]{file}}). Alternatively, file can be a readable text-mode connection (which will be opened for reading if necessary, and if so closed (and hence destroyed) at the end of the function call). File can also be a complete URL. For the supported URL schemes, see help for \code{\link[base]{url}}.}
 
 \item{start.date}{date of beginning of relevant data collection in \code{\link[base]{POSIXct}} format.}
 
@@ -24,13 +24,13 @@ get.tags.data(filename = NULL, start.date = NULL, end.date = NULL,
 
 \item{measurement.period}{Value in seconds defining how often tag was measuring light levels. If NULL value will be taken from known values for detected tag type.}
 
-\item{impute.on.boundaries}{logical, if FLightR should approximate valeues at boundaries. Set it to TRUE only if you have vary few active poitns at each twilight, e.g if tag was saving every 10 minutes or so.}
+\item{impute.on.boundaries}{logical, if FLightR should approximate values at boundaries. Set it to TRUE only if you have vary few active points at each twilight, e.g if tag was saving every 10 minutes or so.}
 }
 \value{
-list, which is to be further processed with the FlightR.
+list, which is to be further processed with the FLightR.
 }
 \description{
-Reads the data frame with detected twilight events into the FlightR
+Reads the data frame with detected twilight events into the FLightR
 }
 \details{
 The returned object has many parts, the important are: (1) the recorded light data, (2) the detected twilight events, (3) light level data at the moment of each determined sunrise and sunset and around them (24 fixes before and 24 after), and (4) technical parameters of the tag, i. e. its type, saving and measuring period (the periodicity, in seconds, at which a tag measures and saves data).
@@ -39,4 +39,3 @@ The returned object has many parts, the important are: (1) the recorded light da
 File<-system.file("extdata", "Godwit_TAGS_format.csv", package = "FLightR")
 Proc.data<-get.tags.data(File)
 }
-
