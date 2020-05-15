@@ -1,445 +1,423 @@
 <!DOCTYPE html>
-
-<html xmlns="http://www.w3.org/1999/xhtml">
-
+<html>
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
-<meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="generator" content="pandoc" />
+<title>FLightR analysis example of Black tailed godwit geolocator</title>
 
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
-<meta name="author" content="Eldar Rakhimberdiev &amp; Julia Karagicheva" />
-
-<meta name="date" content="2019-06-14" />
-
-<title>FLightR with black-tailed godwit vignette from MEE 2017</title>
-
-
-
-<style type="text/css">code{white-space: pre;}</style>
-<style type="text/css" data-origin="pandoc">
-a.sourceLine { display: inline-block; line-height: 1.25; }
-a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
-a.sourceLine:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode { white-space: pre; position: relative; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-code.sourceCode { white-space: pre-wrap; }
-a.sourceLine { text-indent: -1em; padding-left: 1em; }
-}
-pre.numberSource a.sourceLine
-  { position: relative; left: -4em; }
-pre.numberSource a.sourceLine::before
-  { content: attr(title);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; pointer-events: all; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-    color: #aaaaaa;
+<script type="text/javascript">
+window.onload = function() {
+  var imgs = document.getElementsByTagName('img'), i, img;
+  for (i = 0; i < imgs.length; i++) {
+    img = imgs[i];
+    // center an image if it is the only element of its parent
+    if (img.parentElement.childElementCount === 1)
+      img.parentElement.style.textAlign = 'center';
   }
-pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
-div.sourceCode
-  {  }
-@media screen {
-a.sourceLine::before { text-decoration: underline; }
-}
-code span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code span.at { color: #7d9029; } /* Attribute */
-code span.bn { color: #40a070; } /* BaseN */
-code span.bu { } /* BuiltIn */
-code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code span.ch { color: #4070a0; } /* Char */
-code span.cn { color: #880000; } /* Constant */
-code span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code span.dt { color: #902000; } /* DataType */
-code span.dv { color: #40a070; } /* DecVal */
-code span.er { color: #ff0000; font-weight: bold; } /* Error */
-code span.ex { } /* Extension */
-code span.fl { color: #40a070; } /* Float */
-code span.fu { color: #06287e; } /* Function */
-code span.im { } /* Import */
-code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-code span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code span.op { color: #666666; } /* Operator */
-code span.ot { color: #007020; } /* Other */
-code span.pp { color: #bc7a00; } /* Preprocessor */
-code span.sc { color: #4070a0; } /* SpecialChar */
-code span.ss { color: #bb6688; } /* SpecialString */
-code span.st { color: #4070a0; } /* String */
-code span.va { color: #19177c; } /* Variable */
-code span.vs { color: #4070a0; } /* VerbatimString */
-code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+};
+</script>
 
+<!-- Styles for R syntax highlighter -->
+<style type="text/css">
+   pre .operator,
+   pre .paren {
+     color: rgb(104, 118, 135)
+   }
+
+   pre .literal {
+     color: #990073
+   }
+
+   pre .number {
+     color: #099;
+   }
+
+   pre .comment {
+     color: #998;
+     font-style: italic
+   }
+
+   pre .keyword {
+     color: #900;
+     font-weight: bold
+   }
+
+   pre .identifier {
+     color: rgb(0, 0, 0);
+   }
+
+   pre .string {
+     color: #d14;
+   }
 </style>
-<script>
-// apply pandoc div.sourceCode style to pre.sourceCode instead
-(function() {
-  var sheets = document.styleSheets;
-  for (var i = 0; i < sheets.length; i++) {
-    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
-    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
-    for (var j = 0; j < rules.length; j++) {
-      var rule = rules[j];
-      // check if there is a div.sourceCode rule
-      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
-      var style = rule.style.cssText;
-      // check if color or background-color is set
-      if (rule.style.color === '' || rule.style.backgroundColor === '') continue;
-      // replace div.sourceCode by a pre.sourceCode rule
-      sheets[i].deleteRule(j);
-      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
-    }
-  }
-})();
+
+<!-- R syntax highlighter -->
+<script type="text/javascript">
+var hljs=new function(){function m(p){return p.replace(/&/gm,"&amp;").replace(/</gm,"&lt;")}function f(r,q,p){return RegExp(q,"m"+(r.cI?"i":"")+(p?"g":""))}function b(r){for(var p=0;p<r.childNodes.length;p++){var q=r.childNodes[p];if(q.nodeName=="CODE"){return q}if(!(q.nodeType==3&&q.nodeValue.match(/\s+/))){break}}}function h(t,s){var p="";for(var r=0;r<t.childNodes.length;r++){if(t.childNodes[r].nodeType==3){var q=t.childNodes[r].nodeValue;if(s){q=q.replace(/\n/g,"")}p+=q}else{if(t.childNodes[r].nodeName=="BR"){p+="\n"}else{p+=h(t.childNodes[r])}}}if(/MSIE [678]/.test(navigator.userAgent)){p=p.replace(/\r/g,"\n")}return p}function a(s){var r=s.className.split(/\s+/);r=r.concat(s.parentNode.className.split(/\s+/));for(var q=0;q<r.length;q++){var p=r[q].replace(/^language-/,"");if(e[p]){return p}}}function c(q){var p=[];(function(s,t){for(var r=0;r<s.childNodes.length;r++){if(s.childNodes[r].nodeType==3){t+=s.childNodes[r].nodeValue.length}else{if(s.childNodes[r].nodeName=="BR"){t+=1}else{if(s.childNodes[r].nodeType==1){p.push({event:"start",offset:t,node:s.childNodes[r]});t=arguments.callee(s.childNodes[r],t);p.push({event:"stop",offset:t,node:s.childNodes[r]})}}}}return t})(q,0);return p}function k(y,w,x){var q=0;var z="";var s=[];function u(){if(y.length&&w.length){if(y[0].offset!=w[0].offset){return(y[0].offset<w[0].offset)?y:w}else{return w[0].event=="start"?y:w}}else{return y.length?y:w}}function t(D){var A="<"+D.nodeName.toLowerCase();for(var B=0;B<D.attributes.length;B++){var C=D.attributes[B];A+=" "+C.nodeName.toLowerCase();if(C.value!==undefined&&C.value!==false&&C.value!==null){A+='="'+m(C.value)+'"'}}return A+">"}while(y.length||w.length){var v=u().splice(0,1)[0];z+=m(x.substr(q,v.offset-q));q=v.offset;if(v.event=="start"){z+=t(v.node);s.push(v.node)}else{if(v.event=="stop"){var p,r=s.length;do{r--;p=s[r];z+=("</"+p.nodeName.toLowerCase()+">")}while(p!=v.node);s.splice(r,1);while(r<s.length){z+=t(s[r]);r++}}}}return z+m(x.substr(q))}function j(){function q(x,y,v){if(x.compiled){return}var u;var s=[];if(x.k){x.lR=f(y,x.l||hljs.IR,true);for(var w in x.k){if(!x.k.hasOwnProperty(w)){continue}if(x.k[w] instanceof Object){u=x.k[w]}else{u=x.k;w="keyword"}for(var r in u){if(!u.hasOwnProperty(r)){continue}x.k[r]=[w,u[r]];s.push(r)}}}if(!v){if(x.bWK){x.b="\\b("+s.join("|")+")\\s"}x.bR=f(y,x.b?x.b:"\\B|\\b");if(!x.e&&!x.eW){x.e="\\B|\\b"}if(x.e){x.eR=f(y,x.e)}}if(x.i){x.iR=f(y,x.i)}if(x.r===undefined){x.r=1}if(!x.c){x.c=[]}x.compiled=true;for(var t=0;t<x.c.length;t++){if(x.c[t]=="self"){x.c[t]=x}q(x.c[t],y,false)}if(x.starts){q(x.starts,y,false)}}for(var p in e){if(!e.hasOwnProperty(p)){continue}q(e[p].dM,e[p],true)}}function d(B,C){if(!j.called){j();j.called=true}function q(r,M){for(var L=0;L<M.c.length;L++){if((M.c[L].bR.exec(r)||[null])[0]==r){return M.c[L]}}}function v(L,r){if(D[L].e&&D[L].eR.test(r)){return 1}if(D[L].eW){var M=v(L-1,r);return M?M+1:0}return 0}function w(r,L){return L.i&&L.iR.test(r)}function K(N,O){var M=[];for(var L=0;L<N.c.length;L++){M.push(N.c[L].b)}var r=D.length-1;do{if(D[r].e){M.push(D[r].e)}r--}while(D[r+1].eW);if(N.i){M.push(N.i)}return f(O,M.join("|"),true)}function p(M,L){var N=D[D.length-1];if(!N.t){N.t=K(N,E)}N.t.lastIndex=L;var r=N.t.exec(M);return r?[M.substr(L,r.index-L),r[0],false]:[M.substr(L),"",true]}function z(N,r){var L=E.cI?r[0].toLowerCase():r[0];var M=N.k[L];if(M&&M instanceof Array){return M}return false}function F(L,P){L=m(L);if(!P.k){return L}var r="";var O=0;P.lR.lastIndex=0;var M=P.lR.exec(L);while(M){r+=L.substr(O,M.index-O);var N=z(P,M);if(N){x+=N[1];r+='<span class="'+N[0]+'">'+M[0]+"</span>"}else{r+=M[0]}O=P.lR.lastIndex;M=P.lR.exec(L)}return r+L.substr(O,L.length-O)}function J(L,M){if(M.sL&&e[M.sL]){var r=d(M.sL,L);x+=r.keyword_count;return r.value}else{return F(L,M)}}function I(M,r){var L=M.cN?'<span class="'+M.cN+'">':"";if(M.rB){y+=L;M.buffer=""}else{if(M.eB){y+=m(r)+L;M.buffer=""}else{y+=L;M.buffer=r}}D.push(M);A+=M.r}function G(N,M,Q){var R=D[D.length-1];if(Q){y+=J(R.buffer+N,R);return false}var P=q(M,R);if(P){y+=J(R.buffer+N,R);I(P,M);return P.rB}var L=v(D.length-1,M);if(L){var O=R.cN?"</span>":"";if(R.rE){y+=J(R.buffer+N,R)+O}else{if(R.eE){y+=J(R.buffer+N,R)+O+m(M)}else{y+=J(R.buffer+N+M,R)+O}}while(L>1){O=D[D.length-2].cN?"</span>":"";y+=O;L--;D.length--}var r=D[D.length-1];D.length--;D[D.length-1].buffer="";if(r.starts){I(r.starts,"")}return R.rE}if(w(M,R)){throw"Illegal"}}var E=e[B];var D=[E.dM];var A=0;var x=0;var y="";try{var s,u=0;E.dM.buffer="";do{s=p(C,u);var t=G(s[0],s[1],s[2]);u+=s[0].length;if(!t){u+=s[1].length}}while(!s[2]);if(D.length>1){throw"Illegal"}return{r:A,keyword_count:x,value:y}}catch(H){if(H=="Illegal"){return{r:0,keyword_count:0,value:m(C)}}else{throw H}}}function g(t){var p={keyword_count:0,r:0,value:m(t)};var r=p;for(var q in e){if(!e.hasOwnProperty(q)){continue}var s=d(q,t);s.language=q;if(s.keyword_count+s.r>r.keyword_count+r.r){r=s}if(s.keyword_count+s.r>p.keyword_count+p.r){r=p;p=s}}if(r.language){p.second_best=r}return p}function i(r,q,p){if(q){r=r.replace(/^((<[^>]+>|\t)+)/gm,function(t,w,v,u){return w.replace(/\t/g,q)})}if(p){r=r.replace(/\n/g,"<br>")}return r}function n(t,w,r){var x=h(t,r);var v=a(t);var y,s;if(v){y=d(v,x)}else{return}var q=c(t);if(q.length){s=document.createElement("pre");s.innerHTML=y.value;y.value=k(q,c(s),x)}y.value=i(y.value,w,r);var u=t.className;if(!u.match("(\\s|^)(language-)?"+v+"(\\s|$)")){u=u?(u+" "+v):v}if(/MSIE [678]/.test(navigator.userAgent)&&t.tagName=="CODE"&&t.parentNode.tagName=="PRE"){s=t.parentNode;var p=document.createElement("div");p.innerHTML="<pre><code>"+y.value+"</code></pre>";t=p.firstChild.firstChild;p.firstChild.cN=s.cN;s.parentNode.replaceChild(p.firstChild,s)}else{t.innerHTML=y.value}t.className=u;t.result={language:v,kw:y.keyword_count,re:y.r};if(y.second_best){t.second_best={language:y.second_best.language,kw:y.second_best.keyword_count,re:y.second_best.r}}}function o(){if(o.called){return}o.called=true;var r=document.getElementsByTagName("pre");for(var p=0;p<r.length;p++){var q=b(r[p]);if(q){n(q,hljs.tabReplace)}}}function l(){if(window.addEventListener){window.addEventListener("DOMContentLoaded",o,false);window.addEventListener("load",o,false)}else{if(window.attachEvent){window.attachEvent("onload",o)}else{window.onload=o}}}var e={};this.LANGUAGES=e;this.highlight=d;this.highlightAuto=g;this.fixMarkup=i;this.highlightBlock=n;this.initHighlighting=o;this.initHighlightingOnLoad=l;this.IR="[a-zA-Z][a-zA-Z0-9_]*";this.UIR="[a-zA-Z_][a-zA-Z0-9_]*";this.NR="\\b\\d+(\\.\\d+)?";this.CNR="\\b(0[xX][a-fA-F0-9]+|(\\d+(\\.\\d*)?|\\.\\d+)([eE][-+]?\\d+)?)";this.BNR="\\b(0b[01]+)";this.RSR="!|!=|!==|%|%=|&|&&|&=|\\*|\\*=|\\+|\\+=|,|\\.|-|-=|/|/=|:|;|<|<<|<<=|<=|=|==|===|>|>=|>>|>>=|>>>|>>>=|\\?|\\[|\\{|\\(|\\^|\\^=|\\||\\|=|\\|\\||~";this.ER="(?![\\s\\S])";this.BE={b:"\\\\.",r:0};this.ASM={cN:"string",b:"'",e:"'",i:"\\n",c:[this.BE],r:0};this.QSM={cN:"string",b:'"',e:'"',i:"\\n",c:[this.BE],r:0};this.CLCM={cN:"comment",b:"//",e:"$"};this.CBLCLM={cN:"comment",b:"/\\*",e:"\\*/"};this.HCM={cN:"comment",b:"#",e:"$"};this.NM={cN:"number",b:this.NR,r:0};this.CNM={cN:"number",b:this.CNR,r:0};this.BNM={cN:"number",b:this.BNR,r:0};this.inherit=function(r,s){var p={};for(var q in r){p[q]=r[q]}if(s){for(var q in s){p[q]=s[q]}}return p}}();hljs.LANGUAGES.cpp=function(){var a={keyword:{"false":1,"int":1,"float":1,"while":1,"private":1,"char":1,"catch":1,"export":1,virtual:1,operator:2,sizeof:2,dynamic_cast:2,typedef:2,const_cast:2,"const":1,struct:1,"for":1,static_cast:2,union:1,namespace:1,unsigned:1,"long":1,"throw":1,"volatile":2,"static":1,"protected":1,bool:1,template:1,mutable:1,"if":1,"public":1,friend:2,"do":1,"return":1,"goto":1,auto:1,"void":2,"enum":1,"else":1,"break":1,"new":1,extern:1,using:1,"true":1,"class":1,asm:1,"case":1,typeid:1,"short":1,reinterpret_cast:2,"default":1,"double":1,register:1,explicit:1,signed:1,typename:1,"try":1,"this":1,"switch":1,"continue":1,wchar_t:1,inline:1,"delete":1,alignof:1,char16_t:1,char32_t:1,constexpr:1,decltype:1,noexcept:1,nullptr:1,static_assert:1,thread_local:1,restrict:1,_Bool:1,complex:1},built_in:{std:1,string:1,cin:1,cout:1,cerr:1,clog:1,stringstream:1,istringstream:1,ostringstream:1,auto_ptr:1,deque:1,list:1,queue:1,stack:1,vector:1,map:1,set:1,bitset:1,multiset:1,multimap:1,unordered_set:1,unordered_map:1,unordered_multiset:1,unordered_multimap:1,array:1,shared_ptr:1}};return{dM:{k:a,i:"</",c:[hljs.CLCM,hljs.CBLCLM,hljs.QSM,{cN:"string",b:"'\\\\?.",e:"'",i:"."},{cN:"number",b:"\\b(\\d+(\\.\\d*)?|\\.\\d+)(u|U|l|L|ul|UL|f|F)"},hljs.CNM,{cN:"preprocessor",b:"#",e:"$"},{cN:"stl_container",b:"\\b(deque|list|queue|stack|vector|map|set|bitset|multiset|multimap|unordered_map|unordered_set|unordered_multiset|unordered_multimap|array)\\s*<",e:">",k:a,r:10,c:["self"]}]}}}();hljs.LANGUAGES.r={dM:{c:[hljs.HCM,{cN:"number",b:"\\b0[xX][0-9a-fA-F]+[Li]?\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\b\\d+(?:[eE][+\\-]?\\d*)?L\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\b\\d+\\.(?!\\d)(?:i\\b)?",e:hljs.IMMEDIATE_RE,r:1},{cN:"number",b:"\\b\\d+(?:\\.\\d*)?(?:[eE][+\\-]?\\d*)?i?\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\.\\d+(?:[eE][+\\-]?\\d*)?i?\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"keyword",b:"(?:tryCatch|library|setGeneric|setGroupGeneric)\\b",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\.\\.\\.",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\.\\.\\d+(?![\\w.])",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\b(?:function)",e:hljs.IMMEDIATE_RE,r:2},{cN:"keyword",b:"(?:if|in|break|next|repeat|else|for|return|switch|while|try|stop|warning|require|attach|detach|source|setMethod|setClass)\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"literal",b:"(?:NA|NA_integer_|NA_real_|NA_character_|NA_complex_)\\b",e:hljs.IMMEDIATE_RE,r:10},{cN:"literal",b:"(?:NULL|TRUE|FALSE|T|F|Inf|NaN)\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"identifier",b:"[a-zA-Z.][a-zA-Z0-9._]*\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"operator",b:"<\\-(?!\\s*\\d)",e:hljs.IMMEDIATE_RE,r:2},{cN:"operator",b:"\\->|<\\-",e:hljs.IMMEDIATE_RE,r:1},{cN:"operator",b:"%%|~",e:hljs.IMMEDIATE_RE},{cN:"operator",b:">=|<=|==|!=|\\|\\||&&|=|\\+|\\-|\\*|/|\\^|>|<|!|&|\\||\\$|:",e:hljs.IMMEDIATE_RE,r:0},{cN:"operator",b:"%",e:"%",i:"\\n",r:1},{cN:"identifier",b:"`",e:"`",r:0},{cN:"string",b:'"',e:'"',c:[hljs.BE],r:0},{cN:"string",b:"'",e:"'",c:[hljs.BE],r:0},{cN:"paren",b:"[[({\\])}]",e:hljs.IMMEDIATE_RE,r:0}]}};
+hljs.initHighlightingOnLoad();
 </script>
 
 
 
-<style type="text/css">body {
-background-color: #fff;
-margin: 1em auto;
-max-width: 700px;
-overflow: visible;
-padding-left: 2em;
-padding-right: 2em;
-font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-font-size: 14px;
-line-height: 1.35;
+<style type="text/css">
+body, td {
+   font-family: sans-serif;
+   background-color: white;
+   font-size: 13px;
 }
-#header {
-text-align: center;
+
+body {
+  max-width: 800px;
+  margin: auto;
+  padding: 1em;
+  line-height: 20px;
 }
-#TOC {
-clear: both;
-margin: 0 0 10px 10px;
-padding: 4px;
-width: 400px;
-border: 1px solid #CCCCCC;
-border-radius: 5px;
-background-color: #f6f6f6;
-font-size: 13px;
-line-height: 1.3;
+
+tt, code, pre {
+   font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace;
 }
-#TOC .toctitle {
-font-weight: bold;
-font-size: 15px;
-margin-left: 5px;
+
+h1 {
+   font-size:2.2em;
 }
-#TOC ul {
-padding-left: 40px;
-margin-left: -1.5em;
-margin-top: 5px;
-margin-bottom: 5px;
+
+h2 {
+   font-size:1.8em;
 }
-#TOC ul ul {
-margin-left: -2em;
+
+h3 {
+   font-size:1.4em;
 }
-#TOC li {
-line-height: 16px;
+
+h4 {
+   font-size:1.0em;
 }
-table {
-margin: 1em auto;
-border-width: 1px;
-border-color: #DDDDDD;
-border-style: outset;
-border-collapse: collapse;
+
+h5 {
+   font-size:0.9em;
 }
-table th {
-border-width: 2px;
-padding: 5px;
-border-style: inset;
+
+h6 {
+   font-size:0.8em;
 }
-table td {
-border-width: 1px;
-border-style: inset;
-line-height: 18px;
-padding: 5px 5px;
+
+a:visited {
+   color: rgb(50%, 0%, 50%);
 }
-table, table th, table td {
-border-left-style: none;
-border-right-style: none;
-}
-table thead, table tr.even {
-background-color: #f7f7f7;
-}
-p {
-margin: 0.5em 0;
-}
-blockquote {
-background-color: #f6f6f6;
-padding: 0.25em 0.75em;
-}
-hr {
-border-style: solid;
-border: none;
-border-top: 1px solid #777;
-margin: 28px 0;
-}
-dl {
-margin-left: 0;
-}
-dl dd {
-margin-bottom: 13px;
-margin-left: 13px;
-}
-dl dt {
-font-weight: bold;
-}
-ul {
-margin-top: 0;
-}
-ul li {
-list-style: circle outside;
-}
-ul ul {
-margin-bottom: 0;
-}
-pre, code {
-background-color: #f7f7f7;
-border-radius: 3px;
-color: #333;
-white-space: pre-wrap; 
+
+pre, img {
+  max-width: 100%;
 }
 pre {
-border-radius: 3px;
-margin: 5px 0px 10px 0px;
-padding: 10px;
+  overflow-x: auto;
 }
-pre:not([class]) {
-background-color: #f7f7f7;
+pre code {
+   display: block; padding: 0.5em;
 }
+
 code {
-font-family: Consolas, Monaco, 'Courier New', monospace;
-font-size: 85%;
+  font-size: 92%;
+  border: 1px solid #ccc;
 }
-p > code, li > code {
-padding: 2px 0px;
-}
-div.figure {
-text-align: center;
-}
-img {
-background-color: #FFFFFF;
-padding: 2px;
-border: 1px solid #DDDDDD;
-border-radius: 3px;
-border: 1px solid #CCCCCC;
-margin: 0 5px;
-}
-h1 {
-margin-top: 0;
-font-size: 35px;
-line-height: 40px;
-}
-h2 {
-border-bottom: 4px solid #f7f7f7;
-padding-top: 10px;
-padding-bottom: 2px;
-font-size: 145%;
-}
-h3 {
-border-bottom: 2px solid #f7f7f7;
-padding-top: 10px;
-font-size: 120%;
-}
-h4 {
-border-bottom: 1px solid #f7f7f7;
-margin-left: 8px;
-font-size: 105%;
-}
-h5, h6 {
-border-bottom: 1px solid #ccc;
-font-size: 105%;
-}
-a {
-color: #0033dd;
-text-decoration: none;
-}
-a:hover {
-color: #6666ff; }
-a:visited {
-color: #800080; }
-a:visited:hover {
-color: #BB00BB; }
-a[href^="http:"] {
-text-decoration: underline; }
-a[href^="https:"] {
-text-decoration: underline; }
 
-code > span.kw { color: #555; font-weight: bold; } 
-code > span.dt { color: #902000; } 
-code > span.dv { color: #40a070; } 
-code > span.bn { color: #d14; } 
-code > span.fl { color: #d14; } 
-code > span.ch { color: #d14; } 
-code > span.st { color: #d14; } 
-code > span.co { color: #888888; font-style: italic; } 
-code > span.ot { color: #007020; } 
-code > span.al { color: #ff0000; font-weight: bold; } 
-code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61717; background-color: #e3d2d2; } 
+code[class] {
+  background-color: #F8F8F8;
+}
+
+table, td, th {
+  border: none;
+}
+
+blockquote {
+   color:#666666;
+   margin:0;
+   padding-left: 1em;
+   border-left: 0.5em #EEE solid;
+}
+
+hr {
+   height: 0px;
+   border-bottom: none;
+   border-top-width: thin;
+   border-top-style: dotted;
+   border-top-color: #999999;
+}
+
+@media print {
+   * {
+      background: transparent !important;
+      color: black !important;
+      filter:none !important;
+      -ms-filter: none !important;
+   }
+
+   body {
+      font-size:12pt;
+      max-width:100%;
+   }
+
+   a, a:visited {
+      text-decoration: underline;
+   }
+
+   hr {
+      visibility: hidden;
+      page-break-before: always;
+   }
+
+   pre, blockquote {
+      padding-right: 1em;
+      page-break-inside: avoid;
+   }
+
+   tr, img {
+      page-break-inside: avoid;
+   }
+
+   img {
+      max-width: 100% !important;
+   }
+
+   @page :left {
+      margin: 15mm 20mm 15mm 10mm;
+   }
+
+   @page :right {
+      margin: 15mm 10mm 15mm 20mm;
+   }
+
+   p, h2, h3 {
+      orphans: 3; widows: 3;
+   }
+
+   h2, h3 {
+      page-break-after: avoid;
+   }
+}
 </style>
-
 
 
 
 </head>
 
 <body>
-
-
-
-
-<h1 class="title toc-ignore">FLightR with black-tailed godwit vignette from MEE 2017</h1>
-<h4 class="author">Eldar Rakhimberdiev &amp; Julia Karagicheva</h4>
-<h4 class="date">2019-06-14</h4>
-
-
-
-<div id="flightr-analysis-example-of-black-tailed-godwit-geolocator" class="section level1">
 <h1>FLightR analysis example of Black tailed godwit geolocator</h1>
-<p><em>this vignette is supplementary material to</em> <strong>Rakhimberdiev E., Saveliev A., Piersma, T., Karagicheva J. 2017 FLightR: An R package for reconstructing animal paths from solar geolocation loggers. Methods in Ecology and Evolution. <a href="http://www.dx.doi.org/10.1111/2041-210X.12765">DOI</a></strong></p>
-<div id="install-package" class="section level2">
+
+<p><em>this vignette is supplementary material to</em>
+<strong>Rakhimberdiev E., Saveliev A., Piersma, T., Karagicheva J. 2017 FLightR: An R package for reconstructing animal paths from solar geolocation loggers. Methods in Ecology and Evolution. <a href="http://www.dx.doi.org/10.1111/2041-210X.12765">DOI</a></strong></p>
+
 <h2>Install package</h2>
-<p>Note that we used FLightR 0.4.5 version, and running this example in later versions may provide somehow different results. To install the latest CRAN version try</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">install.packages</span>(<span class="st">&#39;FLightR&#39;</span>)</a></code></pre></div>
-<p>To run version 0.4.5 which we use in this example try</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1"><span class="kw">library</span>(devtools)</a>
-<a class="sourceLine" id="cb2-2" title="2"><span class="kw">install_github</span>(<span class="st">&#39;eldarrak/FLightR@0.4.5&#39;</span>)</a></code></pre></div>
+
+<p>Note that we used FLightR 0.4.5 version, and running this example in later versions may provide somehow different results.
+To install the latest CRAN version try</p>
+
+<pre><code class="r">install.packages(&#39;FLightR&#39;)
+</code></pre>
+
+<p>To run version 0.4.5 which we use in this example try </p>
+
+<pre><code class="r">library(devtools)
+install_github(&#39;eldarrak/FLightR@0.4.5&#39;)
+</code></pre>
+
 <p>The latest version is available here:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1"><span class="kw">install_github</span>(<span class="st">&#39;eldarrak/FLightR&#39;</span>)</a></code></pre></div>
+
+<pre><code class="r">install_github(&#39;eldarrak/FLightR&#39;)
+</code></pre>
+
 <p>Load package</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1"><span class="kw">library</span>(FLightR)</a></code></pre></div>
-<pre><code>## This is FLightR 0.4.9
-##  Note that for use of plotting functions relying on google maps you should get the Google maps api key</code></pre>
-</div>
-<div id="data-preparation-and-import" class="section level2">
+
+<pre><code class="r">library(FLightR)
+</code></pre>
+
+<pre><code>## This is FLightR 0.5.0
+##  Note that for use of plotting functions relying on google maps you should get the Google maps api key
+</code></pre>
+
 <h2>1. Data preparation and import</h2>
-<p>The procedure of the definition of the twilight events, i. e. sunrises and sunsets, is not implemented in FLightR. Please, use appropriate functions in other R packages, e.g. BAStag, twGeos or GeoLight <a href="#lisovski_2012a">Lisovski et al. 2012a</a>. In this software, user guides semi-automatically search for the twilight times and then visually explores the light data, manually removing twilights defined apparently wrong or around which the light pattern is atypical or systematically biased, e.g. when a bird enters or exits a cavity during twilight (<a href="#rakhimberidev_jab_2016">Rakhimberdiev et al. 2016</a>). An example of the routine for the twilight definition in BAStag is available as <a href="https://github.com/eldarrak/FLightR/blob/master/examples/Black-Tailed_Godwit_JAB_example/A4_BAStag_routine.Rmd">appendix A4</a> to <a href="#rakhimberdiev_jab_2016">Rakhimberdiev et al. 2016</a>.</p>
-<p>FLightR works with the ‘TAGS’ format, which is an agreed general annotation of twilight data by National Centre for Ecological Analysis and Synthesis working group ‘Establishing an open-source animal-tracking analysis platform for archival geolocators <a href="https://www.nceas.ucsb.edu/featured/bridge" class="uri">https://www.nceas.ucsb.edu/featured/bridge</a>. A TAGS file is a CSV file containing the following fields:</p>
+
+<p>The procedure of the definition of the twilight events, i. e. sunrises and sunsets, is not implemented in FLightR. Please, use appropriate functions in other R packages, e.g. BAStag, twGeos or GeoLight <a href="#lisovski_2012a">Lisovski et al. 2012a</a>. In this software, user guides semi-automatically search for the twilight times and then visually explores the light data, manually removing twilights defined apparently wrong or around which the light pattern is atypical or systematically biased, e.g. when a bird enters or exits a cavity during twilight (<a href="#rakhimberidev_jab_2016">Rakhimberdiev et al. 2016</a>). An example of the routine for the twilight definition in BAStag is available as <a href="https://github.com/eldarrak/FLightR/blob/master/examples/Black-Tailed_Godwit_JAB_example/A4_BAStag_routine.Rmd">appendix A4</a> to <a href="#rakhimberdiev_jab_2016">Rakhimberdiev et al. 2016</a>.</p>
+
+<p>FLightR works with the ‘TAGS’ format, which is an agreed general annotation of twilight data by National Centre for Ecological Analysis and Synthesis working group ‘Establishing an open-source animal-tracking analysis platform for archival geolocators <a href="https://www.nceas.ucsb.edu/workinggroups/establishing-open-source-animal-tracking-analysis-platform-archival-geolocators">https://www.nceas.ucsb.edu/workinggroups/establishing-open-source-animal-tracking-analysis-platform-archival-geolocators</a>. A TAGS file is a CSV file containing the following fields: </p>
+
 <ul>
-<li><code>datetime</code> – date and time in ISO 8601 format e.g. 2013-06-16T00:00:11.000Z;</li>
+<li><code>datetime</code> – date and time in ISO 8601 format e.g. 2013-06-16T00:00:11.000Z;</li>
 <li><code>light</code> – light value measured by tag;</li>
 <li><code>twilight</code> – assigned by the software numeric indication of whether the record belongs to sunrise (1), sunset (2) or none of those (0);</li>
 <li><code>excluded</code> – indication of whether a twilight was excluded during manual inspection (logical, <code>TRUE | FALSE</code>);</li>
-<li><code>interp</code> - indication of whether the light value at twilight was interpolated (logical, <code>TRUE | FALSE</code>). The fields <code>excluded</code> and <code>interp</code> may have values of <code>TRUE</code> only for <code>twilight &gt; 0</code>. The online TAGS service saves data in the TAGS format. In the R packages GeoLight and BAStag or twGeos, the annotated twilight data need to be exported to TAGS, for which the functions in the FLightR (<code>GeoLight2TAGS</code>, <code>BAStag2TAGS</code> or <code>twGeos2TAGS</code>) can be used.</li>
+<li><code>interp</code> - indication of whether the light value at twilight was interpolated (logical, <code>TRUE | FALSE</code>). 
+The fields <code>excluded</code> and <code>interp</code> may have values of <code>TRUE</code> only for <code>twilight &gt; 0</code>. 
+The online TAGS service saves data in the TAGS format. In the R packages GeoLight and BAStag or twGeos, the annotated twilight data need to be exported to TAGS, for which the functions in the FLightR (<code>GeoLight2TAGS</code>,  <code>BAStag2TAGS</code> or <code>twGeos2TAGS</code>) can be used.</li>
 </ul>
-<p>We will use the TAGS formatted data provided as appendix A3 to <a href="#rakhimberdiev_jab_2016">Rakhimberdiev et al. 2016</a> also available on the authors’ GitHub page:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1"><span class="kw">download.file</span>(<span class="st">&#39;https://git.io/vrJgv&#39;</span>, <span class="st">&#39;example_TAGS_format.csv&#39;</span>)</a></code></pre></div>
-<p>The function <code>get.tags.data</code> reads comma separated file in the TAGS format, detects the tag type, checks whether the light data are log-transformed, transforms them back from the log scale if needed and creates an object, containing</p>
-<ol style="list-style-type: decimal">
+
+<p>We will use the TAGS formatted data provided as appendix A3 to <a href="#rakhimberdiev_jab_2016">Rakhimberdiev et al. 2016</a> also available on the authors’ GitHub page:</p>
+
+<pre><code class="r">download.file(&#39;https://git.io/vrJgv&#39;, &#39;example_TAGS_format.csv&#39;)
+</code></pre>
+
+<p>The function <code>get.tags.data</code> reads comma separated file in the TAGS format, detects the tag type, checks whether the light data are log-transformed, transforms them back from the log scale if needed and creates an object, containing </p>
+
+<ol>
 <li>the recorded light data,</li>
 <li>the detected twilight events,</li>
 <li>light level data at the moment of each determined sunrise and sunset and around them (24 fixes before and 24 after it events into an object of two lists</li>
 <li>technical parameters of the tag, added automatically, unless preset by the user.</li>
 </ol>
+
 <p>The function works with all the common tag types: mk tags (produced by British Antarctic Survey, Lotek, and Migrate Technology Ltd.), Intigeo tags (Migrate technology Ltd.) and GDL tags (Swiss Ornithological Institute).</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" title="1">Proc.data&lt;-<span class="kw">get.tags.data</span>(<span class="st">&quot;example_TAGS_format.csv&quot;</span>)</a></code></pre></div>
-</div>
-<div id="calibration" class="section level2">
+
+<pre><code class="r">Proc.data&lt;-get.tags.data(&quot;example_TAGS_format.csv&quot;)
+</code></pre>
+
 <h2>2. Calibration</h2>
-<p>Geolocators measure light levels with different precision, and calibration is needed to establish the relationship between the observed and the expected light levels for each device. This relationship is depicted by the calibration parameters (slopes), calculated using the data recorded in known (calibration) geographic positions, e. g. where the animal was tagged, recaptured or observed. FLightR uses a ‘template fit’ for calibration <a href="#ekstrom_2004">Ekstrom 2004, 2007</a>. For each tag it finds the linear (on a log-log scale) relationship between the light levels measured in known locations and the theoretical light levels, estimated from current sun angle in these locations with the deterministic equation developed by Ekstrom <a href="#rakhimberdiev_movecol_2015">Rakhimberdiev et al. 2015</a>.</p>
-<p>To calculate the calibration parameters user needs to create a data frame where the geographic coordinates of the calibration location, and the start and end dates of the calibration period, i. e. the period of residence in the known location, are specified: * <code>calibration.start</code> (POSIXct format) * <code>calibration.stop</code> (POSIXct format) * <code>lon</code> (numeric) * <code>lat</code> (numeric) The data frame contains as many rows as many distinct calibration periods the track contains.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1">Calibration.periods&lt;-<span class="kw">data.frame</span>(</a>
-<a class="sourceLine" id="cb8-2" title="2">        <span class="dt">calibration.start=</span><span class="kw">as.POSIXct</span>(<span class="kw">c</span>(<span class="ot">NA</span>, <span class="st">&quot;2014-05-05&quot;</span>)),</a>
-<a class="sourceLine" id="cb8-3" title="3">        <span class="dt">calibration.stop=</span><span class="kw">as.POSIXct</span>(<span class="kw">c</span>(<span class="st">&quot;2013-08-20&quot;</span>, <span class="ot">NA</span>)),</a>
-<a class="sourceLine" id="cb8-4" title="4">        <span class="dt">lon=</span><span class="fl">5.43</span>, <span class="dt">lat=</span><span class="fl">52.93</span>) </a>
-<a class="sourceLine" id="cb8-5" title="5">        <span class="co">#use c() also for the geographic coordinates, </span></a>
-<a class="sourceLine" id="cb8-6" title="6">        <span class="co">#if you have more than one calibration location</span></a>
-<a class="sourceLine" id="cb8-7" title="7">        <span class="co"># (e. g.,  lon=c(5.43, 6.00), lat=c(52.93,52.94))</span></a>
-<a class="sourceLine" id="cb8-8" title="8"><span class="kw">print</span>(Calibration.periods)</a></code></pre></div>
-<p>In this example, we have two calibration periods in the same location, at the beginning and at the end of the track. This is a common case, as the birds are often recaptured at the same location, where they were tagged.</p>
-<p>When multiple calibration locations are available, each of them has to be processed with the function <code>plot_slopes_by_location</code>. In this case, in the <code>Calibration periods</code> data frame, each row should refer to one calibration period. Compiling the data frame with multiple calibration locations, use <code>c()</code> also for the geographic coordinates (e. g., <code>lon=c(5.43, 6.00), lat=c(52.93,52.94)</code>).</p>
-<p>A ‘Calibration’ object is compiled with the function<code>make.calibration</code> from the created <code>Calibration periods</code> data frame and the <code>Proc.data</code> object.</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" title="1">Calibration&lt;-<span class="kw">make.calibration</span>(Proc.data, Calibration.periods)</a></code></pre></div>
-<p>This object contains all the calibration parameters for the tag, and it will be further used for calculation of geographic positions across the track. When there are more than one calibration periods, the parameter <code>model.ageing</code> can be set <code>TRUE</code> to account for the tag ageing. In this case, the calibration parameters are calculated, based on the assumption that the calibration slope changes linearly with time.</p>
-<div id="find-calibration-periods-for-a-known-calibration-location" class="section level3">
+
+<p>Geolocators measure light levels with different precision, and calibration is needed to establish the relationship between the observed and the expected light levels for each device. This relationship is depicted by the calibration parameters (slopes), calculated using the data recorded in known (calibration) geographic positions, e. g. where the animal was tagged, recaptured or observed. FLightR uses a &#39;template fit&#39; for calibration <a href="#ekstrom_2004">Ekstrom 2004, 2007</a>. For each tag it finds the linear (on a log-log scale) relationship between the light levels measured in known locations and the theoretical light levels, estimated from current sun angle in these locations with the deterministic equation developed by Ekstrom <a href="#rakhimberdiev_movecol_2015">Rakhimberdiev et al. 2015</a>.</p>
+
+<p>To calculate the calibration parameters user needs to create a data frame where the geographic coordinates of the calibration location, and the start and end dates of the calibration period, i. e. the period of residence in the known location, are specified:</p>
+
+<ul>
+<li><code>calibration.start</code> (POSIXct format)</li>
+<li><code>calibration.stop</code> (POSIXct format)</li>
+<li><code>lon</code> (numeric)</li>
+<li><code>lat</code> (numeric)
+The data frame contains as many rows as many distinct calibration periods the track contains. </li>
+</ul>
+
+<pre><code class="r">Calibration.periods&lt;-data.frame(
+        calibration.start=as.POSIXct(c(NA, &quot;2014-05-05&quot;)),
+        calibration.stop=as.POSIXct(c(&quot;2013-08-20&quot;, NA)),
+        lon=5.43, lat=52.93) 
+        #use c() also for the geographic coordinates, 
+        #if you have more than one calibration location
+        # (e. g.,  lon=c(5.43, 6.00), lat=c(52.93,52.94))
+print(Calibration.periods)
+</code></pre>
+
+<p>In this example, we have two calibration periods in the same location, at the beginning and at the end of the track. This is a common case, as the birds are often recaptured at the same location, where they were tagged. </p>
+
+<p>When multiple calibration locations are available, each of them has to be processed with the function <code>plot_slopes_by_location</code>.  In this case, in the <code>Calibration periods</code> data frame, each row should refer to one calibration period. Compiling the data frame with multiple calibration locations, use <code>c()</code> also for the geographic coordinates (e. g., <code>lon=c(5.43, 6.00), lat=c(52.93,52.94)</code>).</p>
+
+<p>A &#39;Calibration&#39; object is compiled with the function<code>make.calibration</code> from the created <code>Calibration periods</code> data frame and the <code>Proc.data</code> object. </p>
+
+<pre><code class="r">Calibration&lt;-make.calibration(Proc.data, Calibration.periods)
+</code></pre>
+
+<p>This object contains all the calibration parameters for the tag, and it will be further used for calculation of geographic positions across the track. When there are more than one calibration periods, the parameter <code>model.ageing</code> can be set <code>TRUE</code> to account for the tag ageing. In this case, the calibration parameters are calculated, based on the assumption that the calibration slope changes linearly with time. </p>
+
 <h3>Find calibration periods for a known calibration location</h3>
-<p>The exact period of a tagged animal’s stay in a known location is usually unknown, but it can be derived from the data. For this, calibration slopes for the sunset and sunrise of each day of the tracking period are calculated, based on the assumption that the tag remained in the same known position all the time. The slopes are calculated and plotted with the function <code>plot_slopes_by_location</code>.</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" title="1"><span class="kw">plot_slopes_by_location</span>(<span class="dt">Proc.data=</span>Proc.data, <span class="dt">location=</span><span class="kw">c</span>(<span class="fl">5.43</span>, <span class="fl">52.93</span>))</a></code></pre></div>
-<p>Looking at the plot, we can define the time periods, during which the tag resided in the calibration location (recall, that we assume that the tag remained in this location all the time). Because calibration slopes reflect the adequacy of the light level measured by the device, they vary little, in time and between sunsets and sunrises, as long as the tagged animal stays in the calibration location, but become apparently diverse, when it moves away from it. Both patterns are clearly distinguishable at the plot.</p>
+
+<p>The exact period of a tagged animal&#39;s stay in a known location is usually unknown, but it can be derived from the data. For this, calibration slopes for the sunset and sunrise of each day of the tracking period are calculated, based on the assumption that the tag remained in the same known position all the time. The slopes are calculated and plotted with the function <code>plot_slopes_by_location</code>.</p>
+
+<pre><code class="r">plot_slopes_by_location(Proc.data=Proc.data, location=c(5.43, 52.93))
+</code></pre>
+
+<p>Looking at the plot, we can define the time periods, during which the tag resided in the calibration location (recall, that we assume that the tag remained in this location all the time). Because calibration slopes reflect the adequacy of the light level measured by the device, they vary little, in time and between sunsets and sunrises, as long as the tagged animal stays in the calibration location, but become apparently diverse, when it moves away from it. Both patterns are clearly distinguishable at the plot. </p>
+
 <p>Play with <code>abline()</code> to find the proper boundaries for the calibration.</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" title="1"><span class="kw">abline</span>(<span class="dt">v=</span><span class="kw">as.POSIXct</span>(<span class="st">&quot;2013-08-20&quot;</span>)) <span class="co"># end of first calibration period</span></a>
-<a class="sourceLine" id="cb11-2" title="2"><span class="kw">abline</span>(<span class="dt">v=</span><span class="kw">as.POSIXct</span>(<span class="st">&quot;2014-05-05&quot;</span>)) <span class="co"># start of the second calibration period</span></a></code></pre></div>
-</div>
-<div id="find-a-calibration-location-for-a-known-calibration-period" class="section level3">
+
+<pre><code class="r">abline(v=as.POSIXct(&quot;2013-08-20&quot;)) # end of first calibration period
+abline(v=as.POSIXct(&quot;2014-05-05&quot;)) # start of the second calibration period
+</code></pre>
+
 <h3>Find a calibration location for a known calibration period</h3>
-<p>It may happen that an animal was tagged in the High Arctic under polar day conditions or that it moved far away from the capture site immediately after tagging and the roof-top calibration data are not available. Even in such cases it is still possible to obtain calibration parameters for a resident period at unknown location. FLightR approach to this problem is similar to Hill-Ekstrom calibration [ <a href="#lisovski_2012b">Lisovski et al. 2012b</a> implemented in GeoLight <a href="#lisovski_2012a">Lisovksi et al. 2012a</a>. If bird is assumed to be resident at some period one can try:</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" title="1"><span class="co"># ~ 15 min run time</span></a>
-<a class="sourceLine" id="cb12-2" title="2">Location&lt;-<span class="kw">find.stationary.location</span>(Proc.data, <span class="st">&#39;2013-07-20&#39;</span>, <span class="st">&#39;2013-08-20&#39;</span>,</a>
-<a class="sourceLine" id="cb12-3" title="3">                                   <span class="dt">initial.coords=</span><span class="kw">c</span>(<span class="dv">10</span>, <span class="dv">50</span>))</a></code></pre></div>
+
+<p>It may happen that an animal was tagged in the High Arctic under polar day conditions or that it moved far away from the capture site immediately after tagging and the roof-top calibration data are not available. Even in such cases it is still possible to obtain calibration parameters for a resident period at unknown location. FLightR approach to this problem is similar to Hill-Ekstrom calibration [
+<a href="#lisovski_2012b">Lisovski et al. 2012b</a> implemented in GeoLight <a href="#lisovski_2012a">Lisovksi et al. 2012a</a>. If bird is assumed to be resident at some period one can try:</p>
+
+<pre><code class="r"># ~ 15 min run time
+Location&lt;-find.stationary.location(Proc.data, &#39;2013-07-20&#39;, &#39;2013-08-20&#39;,
+                                   initial.coords=c(10, 50))
+</code></pre>
+
 <p>The function will return geographic coordinates of the location for which the range of errors in slopes is minimal. User has to provide the initial coordinates, which should be within a few thousand kilometers from the hypothetical real location.</p>
-</div>
-</div>
-<div id="assign-spatial-extent" class="section level2">
+
 <h2>3. Assign spatial extent</h2>
-<p>The function <code>make.grid</code> sets up a spatial grid (50 X 50 km on default) delimited by user-defined boundaries: <code>left</code>, <code>right</code>. <code>bottom</code> and <code>top</code>. When the tagged animal cannot occur or stay between two subsequent twilights over particular areas, e.g. open water for a landbird or deep inland for a marine animal, additional parameters <code>distance.from.land.allowed.to.use</code> and <code>distance.from.land.allowed.to.stay</code> can be specified. Each of the parameters require a vector of two numbers: the minimal and the maximal distances (in km) from shoreline, at which the animal is allowed to occur/stay.</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" title="1">Grid&lt;-<span class="kw">make.grid</span>(<span class="dt">left=</span><span class="op">-</span><span class="dv">14</span>, <span class="dt">bottom=</span><span class="dv">30</span>, <span class="dt">right=</span><span class="dv">13</span>, <span class="dt">top=</span><span class="dv">57</span>,</a>
-<a class="sourceLine" id="cb13-2" title="2">   <span class="dt">distance.from.land.allowed.to.use=</span><span class="kw">c</span>(<span class="op">-</span><span class="ot">Inf</span>, <span class="ot">Inf</span>),</a>
-<a class="sourceLine" id="cb13-3" title="3">   <span class="dt">distance.from.land.allowed.to.stay=</span><span class="kw">c</span>(<span class="op">-</span><span class="ot">Inf</span>, <span class="ot">Inf</span>))</a></code></pre></div>
+
+<p>The function <code>make.grid</code> sets up a spatial grid (50 X 50 km on default) delimited by user-defined boundaries: <code>left</code>, <code>right</code>. <code>bottom</code> and <code>top</code>. When the tagged animal cannot occur or stay between two subsequent twilights over particular areas, e.g. open water for a landbird or deep inland for a marine animal, additional parameters <code>distance.from.land.allowed.to.use</code> and <code>distance.from.land.allowed.to.stay</code> can be specified. Each of the parameters require a vector of two numbers: the minimal and the maximal distances (in km) from shoreline, at which the animal is allowed to occur/stay.</p>
+
+<pre><code class="r">Grid&lt;-make.grid(left=-14, bottom=30, right=13, top=57,
+   distance.from.land.allowed.to.use=c(-Inf, Inf),
+   distance.from.land.allowed.to.stay=c(-Inf, Inf))
+</code></pre>
+
 <p>The resulting <code>Grid</code> is a matrix with the columns: <code>lon</code> (longitude), <code>lat</code> (latitude) and <code>Stay</code> (probability of stay). The grid cells, which the animal presumably cannot use, are excluded from the data, while the locations at which an animal cannot be stationary are given a low probability of stay. Using masks can side track model estimation to the local minima, and we recommend to initially run model without a mask, enable them for the second run and visually compare the results, to see if the model converges to a similar track.</p>
-</div>
-<div id="prepare-the-model-for-run" class="section level2">
+
 <h2>4. Prepare the model for run</h2>
+
 <p>The function <code>make.prerun.object</code> creates a complex object, which will be used in the main run. It incorporates all the objects, created at earlier steps: the light data with the detected twilight events (<code>Proc.data</code>), the spatial parameters (<code>Grid</code>), geographic coordinates of the initial location, where the tracking has started (<code>start</code>), and the calibration parameters (<code>Calibration</code>).</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" title="1"><span class="co"># ~ 15 min run time</span></a>
-<a class="sourceLine" id="cb14-2" title="2">all.in&lt;-<span class="kw">make.prerun.object</span>(Proc.data, Grid, <span class="dt">start=</span><span class="kw">c</span>(<span class="fl">5.43</span>, <span class="fl">52.93</span>), <span class="dt">Calibration=</span>Calibration)</a></code></pre></div>
-</div>
-<div id="particle-filter-run" class="section level2">
+
+<pre><code class="r"># ~ 15 min run time
+all.in&lt;-make.prerun.object(Proc.data, Grid, start=c(5.43, 52.93), Calibration=Calibration)
+</code></pre>
+
 <h2>5. Particle filter run</h2>
-<p>At this stage, the model output is generated. It contains: a table of positions at each twilight (<code>$Results$Quantiles</code>) and their statistics (mean, median values and credible intervals), a table of parameters of the movement model (<code>$Results$Movement.results</code>) and posterior distribution at every twilight (<code>$Results$Points.rle</code>) and at every transition between twilights (<code>$Results$Transitions.rle</code>). Within <code>run.particle.filter</code>, the following parameters can be defined: * <code>nParticles</code> - number of particles (1e4 is recommended for test and 1e6 for the analysis); * <code>threads</code> - amount of parallel threads to use for the run default is -1 that means all available except one; * <code>known.last</code> - TRUE if you know that in the end of the logging period tag occurred in a known place (FALSE is the default option); * <code>check.outliers</code> – FALSE by default. Set it TRUE if you wish on a fly outliers detection, we recommend to use it if the results have strong outliers.</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" title="1">nParticles=<span class="fl">1e6</span></a>
-<a class="sourceLine" id="cb15-2" title="2"><span class="co"># ~ 45 min run time</span></a>
-<a class="sourceLine" id="cb15-3" title="3">Result&lt;-<span class="kw">run.particle.filter</span>(all.in, <span class="dt">threads=</span><span class="op">-</span><span class="dv">1</span>,</a>
-<a class="sourceLine" id="cb15-4" title="4">            <span class="dt">nParticles=</span>nParticles, <span class="dt">known.last=</span><span class="ot">TRUE</span>,</a>
-<a class="sourceLine" id="cb15-5" title="5">            <span class="dt">precision.sd=</span><span class="dv">25</span>, <span class="dt">check.outliers=</span>F)</a>
-<a class="sourceLine" id="cb15-6" title="6"><span class="kw">save</span>(Result, <span class="dt">file=</span><span class="st">&quot;Result.bltg.ageing.model.noOD.RData&quot;</span>)</a></code></pre></div>
+
+<p>At this stage, the model output is generated. It contains: a table of positions at each twilight (<code>$Results$Quantiles</code>) and their statistics (mean, median values and credible intervals), a table of parameters of the movement model (<code>$Results$Movement.results</code>) and posterior distribution at every twilight (<code>$Results$Points.rle</code>) and at every transition between twilights (<code>$Results$Transitions.rle</code>). 
+Within <code>run.particle.filter</code>, the following parameters can be defined: </p>
+
+<ul>
+<li><code>nParticles</code> - number of particles (1e4 is recommended for test and 1e6 for the analysis);</li>
+<li><code>threads</code> - amount of parallel threads to use for the run default is -1 that means all available except one;</li>
+<li><code>known.last</code> - TRUE if you know that in the end of the logging period tag occurred in a known place (FALSE is the default option);</li>
+<li><code>check.outliers</code> – FALSE by default. Set it TRUE if you wish on a fly outliers detection, we recommend to use it if the results have strong outliers.</li>
+</ul>
+
+<pre><code class="r">nParticles=1e6
+# ~ 45 min run time
+Result&lt;-run.particle.filter(all.in, threads=-1,
+            nParticles=nParticles, known.last=TRUE,
+            precision.sd=25, check.outliers=F)
+save(Result, file=&quot;Result.bltg.ageing.model.noOD.RData&quot;)
+</code></pre>
+
 <p>Now the results are saved in your work directory as an RData object.</p>
-</div>
-<div id="estimation-of-arrival-and-departure-dates" class="section level2">
+
 <h2>6. Estimation of arrival and departure dates</h2>
-<p>The function <code>find.times.distribution</code> derives the time at which an animal arrived or departed from the area and provides the measure of its uncertainty. First, select grid points of interest. For example in the current data we are interested in the date when our bird left the Netherlands. We will make a boundary at 2° longitude:</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" title="1">Index&lt;-<span class="kw">which</span>(Result<span class="op">$</span>Spatial<span class="op">$</span>Grid[,<span class="dv">1</span>]<span class="op">&gt;</span>(<span class="dv">2</span>))</a></code></pre></div>
+
+<p>The function <code>find.times.distribution</code> derives the time at which an animal arrived or departed from the area and provides the measure of its uncertainty. First, select grid points of interest. For example in the current data we are interested in the date when our bird left the Netherlands. We will make  a boundary at 2&deg; longitude:</p>
+
+<pre><code class="r">Index&lt;-which(Result$Spatial$Grid[,1]&gt;(2))
+</code></pre>
+
 <p>Estimate probabilities of occurrence within the area at each twilight:</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" title="1">Arrivals.NL&lt;-<span class="kw">find.times.distribution</span>(Result,Index)</a>
-<a class="sourceLine" id="cb17-2" title="2">Arrivals.NL</a></code></pre></div>
+
+<pre><code class="r">Arrivals.NL&lt;-find.times.distribution(Result,Index)
+Arrivals.NL
+</code></pre>
+
 <p>Print a simple summary of the periods of residence and movement:</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" title="1"><span class="kw">stationary.migration.summary</span>(Result, <span class="dt">prob.cutoff =</span> <span class="fl">0.1</span>, <span class="dt">min.stay =</span> <span class="dv">3</span>)</a></code></pre></div>
-</div>
-<div id="visualisation-of-the-results" class="section level2">
+
+<pre><code class="r">stationary.migration.summary(Result, prob.cutoff = 0.1, min.stay = 3)
+</code></pre>
+
 <h2>7. Visualisation of the results</h2>
-<div id="plot-a-simple-map" class="section level3">
+
 <h3>Plot a simple map</h3>
+
 <p>Plot a map with the most probable positions, i. e. combinations of the most probable latitude and longitude for each twilight:</p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" title="1"><span class="kw">map.FLightR.ggmap</span>(Result)</a></code></pre></div>
-</div>
-<div id="plot-lon-lat-graph" class="section level3">
+
+<pre><code class="r">map.FLightR.ggmap(Result)
+</code></pre>
+
 <h3>Plot lon lat graph</h3>
+
 <p>Plot the estimated for each twilight probabilities of an animal to occur at particular latitude and longitude:</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" title="1"><span class="kw">plot_lon_lat</span>(Result)</a></code></pre></div>
-</div>
-<div id="plot-utilization-distribution" class="section level3">
+
+<pre><code class="r">plot_lon_lat(Result)
+</code></pre>
+
 <h3>Plot utilization distribution</h3>
+
 <p>Plot space utilisation distribution for the wintering range:</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" title="1"><span class="kw">plot_util_distr</span>(Result, </a>
-<a class="sourceLine" id="cb21-2" title="2">    <span class="dt">dates=</span><span class="kw">data.frame</span>(<span class="kw">as.POSIXct</span>(<span class="st">&#39;2013-12-01&#39;</span>), <span class="kw">as.POSIXct</span>(<span class="st">&#39;2014-01-31&#39;</span>)),</a>
-<a class="sourceLine" id="cb21-3" title="3">    <span class="dt">add.scale.bar=</span><span class="ot">TRUE</span>, <span class="dt">percentiles=</span><span class="fl">0.5</span>)</a></code></pre></div>
-</div>
-</div>
-<div id="references" class="section level2">
+
+<pre><code class="r">plot_util_distr(Result, 
+    dates=data.frame(as.POSIXct(&#39;2013-12-01&#39;), as.POSIXct(&#39;2014-01-31&#39;)),
+    add.scale.bar=TRUE, percentiles=0.5)
+</code></pre>
+
 <h2>References</h2>
-<ol style="list-style-type: decimal">
+
+<ol>
 <li>Ekstrom, P. (2004). An advance in geolocation by light. Memoirs of the National Institute of Polar Research, Special Issue, 58, 210–226.<a id="ekstrom_2004"></a></li>
 <li>Ekstrom, P. (2007). Error measures for template-fit geolocation based on light. Deep Sea Research Part II: Topical Studies in Oceanography, 54, 392–403.<a id="ekstrom_2007"></a></li>
 <li>Lisovski, S., Hahn, S. &amp; Hodgson, D. (2012a). GeoLight - processing and analysing light-based geolocator data in R. Methods in Ecology and Evolution, 3, 1055–1059.<a id="lisovski_2012b"></a></li>
@@ -447,20 +425,7 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <li>Rakhimberdiev, E., Winkler, D.W., Bridge, E., Seavy, N.E., Sheldon, D., Piersma, T. &amp; Saveliev, A. (2015). A hidden Markov model for reconstructing animal paths from solar geolocation loggers using templates for light intensity. Movement Ecology, 3, 25.<a id="rakhimberdiev_movecol_2015"></a></li>
 <li>Rakhimberdiev, E., Senner, N. R., Verhoeven, M. A., Winkler, D. W., Bouten, W. and Piersma T. (2016) Comparing inferences of solar geolocation data against high-precision GPS data: annual movements of a double-tagged Black-Tailed Godwit. - Journal of Avian Biology 47: 589-596.<a id="rakhimberdiev_jab_2016"></a></li>
 </ol>
-</div>
-</div>
-
-
-
-<!-- dynamically load mathjax for compatibility with self-contained -->
-<script>
-  (function () {
-    var script = document.createElement("script");
-    script.type = "text/javascript";
-    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
-    document.getElementsByTagName("head")[0].appendChild(script);
-  })();
-</script>
 
 </body>
+
 </html>
