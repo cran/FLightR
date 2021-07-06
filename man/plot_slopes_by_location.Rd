@@ -26,6 +26,9 @@ plot_slopes_by_location(
 
 \item{xlim}{the x limits of the plot. The default value, NULL, otherwise can be POSIXct or character in a form readable by \code{\link{as.POSIXct}}.}
 }
+\value{
+'NULL'
+}
 \description{
 The function calculates and plots calibration slopes for sunsets and sunrises for every day of the tracking period, based on the assumption that the tag remained in the same (calibration) location all the time.
 }
@@ -37,8 +40,8 @@ All the obtained calibration periods can be entered in a data frame 'Calibration
 File<-system.file("extdata", "Godwit_TAGS_format.csv", package = "FLightR")
 Proc.data<-get.tags.data(File)
 plot_slopes_by_location(Proc.data=Proc.data, location=c(5.43, 52.93))
-abline(v=as.POSIXct("2013-08-20")) # end of first calibration period
-abline(v=as.POSIXct("2014-05-05")) # start of the second calibration period
+abline(v=as.POSIXct("2013-08-20", tz='GMT')) # end of first calibration period
+abline(v=as.POSIXct("2014-05-05", tz='GMT')) # start of the second calibration period
 
 }
 \author{

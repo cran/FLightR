@@ -10,7 +10,7 @@ bibentry(
 	person(given="Anatoly", family="Saveliev",role="ctb")),
             year = sub("-.*", "", meta$Date),
 			note = paste("R package version", meta$Version),
-			url = "http://github.com/eldarrak/FLightR"
+			url = "https://github.com/eldarrak/FLightR"
 			)
 bibentry(
 	bibtype ="Article",
@@ -25,7 +25,7 @@ bibentry(
                 year = "2015",
 		journal = "Movement Ecology",
                 volume= "3",
-		url = "http://www.movementecologyjournal.com/content/3/1/25",
+		url = "https://movementecologyjournal.biomedcentral.com/articles/10.1186/s40462-015-0062-5",
 		month="dec")
 bibentry(
        bibtype ="Article",
@@ -42,7 +42,7 @@ bibentry(
        number = "4",
        publisher = "Blackwell Publishing Ltd",
        issn = "1600-048X",
-       url = "http://dx.doi.org/10.1111/jav.00891",
+       url = "https://dx.doi.org/10.1111/jav.00891",
        doi = "10.1111/jav.00891",
        pages = "589-596")
        
@@ -58,6 +58,6 @@ bibentry(
        volume = "NA",
        number = "NA",
        publisher = "Blackwell Publishing Ltd",
-       url = "http://dx.doi.org/10.1111/2041-210X.12765",
+       url = "https://dx.doi.org/10.1111/2041-210X.12765",
        doi = "10.1111/2041-210X.12765",
        pages = "NA-NA")

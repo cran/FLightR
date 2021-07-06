@@ -82,10 +82,10 @@ get.tags.data<-function(filename=NULL, start.date=NULL, end.date=NULL, log.light
       }
    }
    
-   cat("tag saved data every", saving.period, "seconds, and is assumed to measure data every", measurement.period, "seconds, and write down", saves[1], "\n" )
+   message("tag saved data every", saving.period, "seconds, and is assumed to measure data every", measurement.period, "seconds, and write down", saves[1], "\n" )
    if (max(TAGS.twilights$light) ==64 & saving.period>500) {
       impute.on.boundaries=TRUE
-      cat("saving period was too long for this type of tag, FLightR will impute data\n")
+      warning("saving period was too long for this type of tag, FLightR will impute data\n")
    }
    Proc.data<-process.twilights(FLightR.data$Data,FLightR.data$twilights, 
                              measurement.period=measurement.period, saving.period=saving.period, impute.on.boundaries=impute.on.boundaries)
@@ -179,14 +179,12 @@ get.tag.type<-function(TAGS.twilights) {
       log_transformed<-TRUE
 	  recognized<-TRUE
    }
-     
-   
    if (recognized==FALSE) { 
-   cat("tag type was not recognised!\nmail me details of your tag and I will add them to the list!\n")
-   return(NULL)
+    warning("tag type was not recognised!\nmail me details of your tag and I will add them to the list!\n")
+    return(NULL)
    } else {
-   cat("Detected", tagtype, "tag\n")
-   if (log_transformed) cat("Data found to be logtransformed\n")
+   message("Detected", tagtype, "tag\n")
+   if (log_transformed) message("Data found to be logtransformed\n")
    Res<-list(tagtype=tagtype, log_transformed=log_transformed)
    return(Res)
   }
@@ -201,7 +199,7 @@ convert.lux.to.tags<-function(file, log=FALSE, log.light.borders=c(1,10)) {
 	log=FALSE
 	Dat<-utils::read.csv(file, skip=20, sep="\t", stringsAsFactors =FALSE)
 	names(Dat)<-c("datetime", "light")
-	Dat$datetime<-as.POSIXct(Dat$datetime, tz="UTC", format="%d/%m/%Y %H:%M:%S")
+	Dat$datetime<-as.POSIXct(Dat$datetime, tz="GMT", format="%d/%m/%Y %H:%M:%S")
 
 	Dat_new<-Dat
 	Dat_new$datetime<-format(Dat_new$datetime, format="%Y-%m-%d %H:%M:%S")
@@ -216,20 +214,20 @@ convert.lux.to.tags<-function(file, log=FALSE, log.light.borders=c(1,10)) {
 	}
 	# now I need to save as csv...
 	utils::write.csv(Dat_new, file=paste(unlist(strsplit(file, ".lux")), "csv", sep="."), quote =FALSE, row.names=FALSE) 
-	cat("Success!\n")
-	cat("file", paste(unlist(strsplit(file, ".lux")), "csv", sep="."), "\nwas saved to", getwd(), "\n")
+	message("Success!\n")
+	message("file", paste(unlist(strsplit(file, ".lux")), "csv", sep="."), "\nwas saved to", getwd(), "\n")
 	return(NULL)
 }
 
 
 read.tags.light.twilight<-function(lig.raw, start.date=NULL, end.date=NULL) {
-	lig.raw$datetime<-as.POSIXct(lig.raw$datetime, tz="UTC", format="%Y-%m-%dT%T")
+	lig.raw$datetime<-as.POSIXct(lig.raw$datetime, tz="GMT", format="%Y-%m-%dT%T")
 
 	###
 	### I also want to exclude the last days...
 	
-	if (!is.null(start.date)) lig.raw<-lig.raw[as.numeric(lig.raw$datetime) > as.numeric(as.POSIXct(start.date , tz="UTC")),]
-	if (!is.null(end.date)) lig.raw<-lig.raw[as.numeric(lig.raw$datetime) < as.numeric(as.POSIXct(end.date , tz="UTC")),]
+	if (!is.null(start.date)) lig.raw<-lig.raw[as.numeric(lig.raw$datetime) > as.numeric(as.POSIXct(start.date , tz="GMT")),]
+	if (!is.null(end.date)) lig.raw<-lig.raw[as.numeric(lig.raw$datetime) < as.numeric(as.POSIXct(end.date , tz="GMT")),]
 
 	## and also I want to exclude the interpolated and excluded afterwards points
 		
@@ -279,7 +277,7 @@ return(Res)
 process.geolight.output<-function(datetime, light, gl_twl) {
 
 #filter <- loessFilter(gl_twl[,1],gl_twl[,2],gl_twl[,3],k=10)
-Filtered_tw <- data.frame(datetime=as.POSIXct(c(gl_twl$tFirst,gl_twl$tSecond),"UTC"),type=c(gl_twl$type,ifelse(gl_twl$type==1,2,1)))
+Filtered_tw <- data.frame(datetime=as.POSIXct(c(gl_twl$tFirst,gl_twl$tSecond),"GMT"),type=c(gl_twl$type,ifelse(gl_twl$type==1,2,1)))
 
 Filtered_tw <- Filtered_tw[!duplicated(Filtered_tw$datetime),]
 Filtered_tw <- Filtered_tw[order(Filtered_tw[,1]),]
@@ -305,7 +303,7 @@ geologger.read.data<-function( file) {
 	track <- utils::read.csv(file,header=FALSE, stringsAsFactors=FALSE) 
 	names(track)<-c('date','time','light')
 	track$datetime <- paste(track$date,track$time,sep=' ') #makes a new column called datetime with date and time concatenated together with a space between
-	track$gmt <- as.POSIXct(strptime(track$datetime,'%d/%m/%Y %H:%M:%S'),'UTC') #makes a new column called gmt with date and time data in a formate that R can work with
+	track$gmt <- as.POSIXct(strptime(track$datetime,'%d/%m/%Y %H:%M:%S'),tz='GMT') #makes a new column called gmt with date and time data in a formate that R can work with
 	d <- data.frame(id =1:nrow(track), gmt = track$gmt, light = track$light) 
 	Data<-list(d=d)
 	return(Data)

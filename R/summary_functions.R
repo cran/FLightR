@@ -13,8 +13,8 @@
 #' # to run example fast we will cut the real data file by 2013 Aug 20
 #' Proc.data<-get.tags.data(File, end.date=as.POSIXct('2013-06-25', tz='GMT'))
 #' Calibration.periods<-data.frame(
-#'        calibration.start=as.POSIXct(c(NA, "2014-05-05")),
-#'        calibration.stop=as.POSIXct(c("2013-08-20", NA)),
+#'        calibration.start=as.POSIXct(c(NA, "2014-05-05"), tz='GMT'),
+#'        calibration.stop=as.POSIXct(c("2013-08-20", NA), tz='GMT'),
 #'        lon=5.43, lat=52.93) 
 #'        #use c() also for the geographic coordinates, if you have more than one calibration location
 #'        # (e. g.,  lon=c(5.43, 6.00), lat=c(52.93,52.94))
@@ -46,7 +46,7 @@ stationary.migration.summary<-function(Result, prob.cutoff=0.1, min.stay=3) {
    #print(data.frame(start=unique(c(0, Cutoffs)), end=unique(c(Cutoffs-1, Total_length))))
    #cat('-----\n')
    if (length(Cutoffs)==0) { 
-      cat('bird likely did not move, exiting without result\n')
+      warning('bird likely did not move, exiting without result\n')
 	  return(NULL)
    } else {
    Total_length<-length(Result$Results$Movement.results$Decision)
@@ -96,10 +96,10 @@ stationary.migration.summary<-function(Result, prob.cutoff=0.1, min.stay=3) {
    Total_twilights<-length(Result$Indices$Matrix.Index.Table$time)
    Total_sites<-nrow(Res$Potential_stat_periods)
    
-   cat('\n\n\nFLightR used',round(Duration), attr(Duration, 'units'), 'from', format(Result$Indices$Matrix.Index.Table$time[1], format='%d-%b-%Y'), 'to', format(rev(Result$Indices$Matrix.Index.Table$time)[1], format='%d-%b-%Y') , 'with', Total_twilights, 'twilights\n')
-   cat('During this time tag moved approximately', round(max(Res$Stationary.periods$Distance2cumulative)), 'km with', nrow(Res$Stationary.periods), 'stationary periods from which', length(which(Res$Potential_stat_periods$Duration>30)), 'were longer than two weeks\n')
-   cat('\n\n Detected stationary periods (without any merging!):\n')
-   print(Res$Stationary.periods[,c(4,7, 12,15,23, 24, 27, 32)])
+   message('\n\n\nFLightR used',round(Duration), attr(Duration, 'units'), 'from', format(Result$Indices$Matrix.Index.Table$time[1], format='%d-%b-%Y'), 'to', format(rev(Result$Indices$Matrix.Index.Table$time)[1], format='%d-%b-%Y') , 'with', Total_twilights, 'twilights\n')
+   message('During this time tag moved approximately', round(max(Res$Stationary.periods$Distance2cumulative)), 'km with', nrow(Res$Stationary.periods), 'stationary periods from which', length(which(Res$Potential_stat_periods$Duration>30)), 'were longer than two weeks\n')
+   message('\n\n Detected stationary periods (without any merging!):\n')
+   message(Res$Stationary.periods[,c(4,7, 12,15,23, 24, 27, 32)])
    return(Res)
    }
 }
@@ -186,7 +186,7 @@ get_ZI_distances<-function(Result) {
        DistancesZI<-rbind(DistancesZI,   c(stats::quantile(Inverse, c(0.25, 0.5, 0.75)), Mean=mean(Inverse)))
     }
   
-    DistancesZI<-cbind(Departure=as.POSIXct(c(NA,Result$Results$Movement.results$time[-length(Result$Results$Movement.results$time)]), origin=c('1970-01-01'), tz='UTC'), Arrival= as.POSIXct(as.numeric(Result$Results$Movement.results$time), tz='UTC', origin='1970-01-01'), as.data.frame(DistancesZI))
+    DistancesZI<-cbind(Departure=as.POSIXct(c(NA,Result$Results$Movement.results$time[-length(Result$Results$Movement.results$time)]), origin=c('1970-01-01'), tz='GMT'), Arrival= as.POSIXct(as.numeric(Result$Results$Movement.results$time), tz='GMT', origin='1970-01-01'), as.data.frame(DistancesZI))
 
 	return(DistancesZI)
 }

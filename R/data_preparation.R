@@ -12,20 +12,21 @@
 #' @param xlim the x limits of the plot. The default value, NULL, otherwise can be POSIXct or character in a form readable by \code{\link{as.POSIXct}}.
 #' @details The plot of calibration slopes is used for finding start and end dates of a calibration period (the time period, during which the tag remained in the calibration location with coordinates (x,y)). During the calibration period, the calibration slopes vary little both, between the twilight events (sunrises and sunsets) and in time. When the tag changes location, the slopes for sunrises and sunsets start to deviate. There may potentially be several calibration periods for the same location (if the bird returned to the same location several times). The boundaries (start and end dates) of each of these periods are captured visually. If there were more than one calibration location, the procedure is repeated, once for each location. 
 #' All the obtained calibration periods can be entered in a data frame 'Calibration.periods', for further analysis. Each line of the data frame contains start and end dates (if applicable) of the calibration period and geographic coordinates of the location.
+#' @return 'NULL'
 #' @examples
 #' File<-system.file("extdata", "Godwit_TAGS_format.csv", package = "FLightR")
 #' Proc.data<-get.tags.data(File)
 #' plot_slopes_by_location(Proc.data=Proc.data, location=c(5.43, 52.93))
-#' abline(v=as.POSIXct("2013-08-20")) # end of first calibration period
-#' abline(v=as.POSIXct("2014-05-05")) # start of the second calibration period
+#' abline(v=as.POSIXct("2013-08-20", tz='GMT')) # end of first calibration period
+#' abline(v=as.POSIXct("2014-05-05", tz='GMT')) # start of the second calibration period
 #'
 #' @author Eldar Rakhimberdiev
 #' @export plot_slopes_by_location
 plot_slopes_by_location<-function(Proc.data, location, log.light.borders='auto', log.irrad.borders='auto', ylim=NULL, xlim=NULL) {
    old.par <- graphics::par(no.readonly = TRUE) 
    Calibration.period<-data.frame(
-         calibration.start=as.POSIXct("1900-01-01"),
-		 calibration.stop=as.POSIXct("2050-01-01"),
+         calibration.start=as.POSIXct("1900-01-01", tz='GMT'),
+		 calibration.stop=as.POSIXct("2050-01-01", tz='GMT'),
 		 lon=location[1], lat=location[2])
    if (log.light.borders[1]=='auto') log.light.borders<-Proc.data$log.light.borders
    if (log.irrad.borders[1]=='auto') log.irrad.borders<-Proc.data$log.irrad.borders
@@ -53,12 +54,13 @@ plot_slopes_by_location<-function(Proc.data, location, log.light.borders='auto',
 #' @param fixed.logSlope these are mean (1) and SD (2) for distribution of slopes. Should normally be estimated from the data (and thus default is c(NA, NA)). Change any of these two finite values if you want them to be predetermined and not estimated from the calibration data.
 #' @param suggest.irrad.borders experimental parameter! If set to TRUE function will try to find the best values for the log.irrad.borders
 #' @param return.slopes if true function will return estimated individual twilight slopes.
+#' @return calibration object to be uses in the \code{\link{make.prerun.object}}
 #' @examples
 #' File<-system.file("extdata", "Godwit_TAGS_format.csv", package = "FLightR")
 #' Proc.data<-get.tags.data(File, end.date=as.POSIXct('2013-08-20', tz='GMT'))
 #' Calibration.periods<-data.frame(
 #'        calibration.start=NA,
-#'        calibration.stop=as.POSIXct("2013-08-20"),
+#'        calibration.stop=as.POSIXct("2013-08-20", tz='GMT'),
 #'        lon=5.43, lat=52.93) 
 #'        #use c() also for the geographic coordinates, if you have more than one calibration location
 #'        # (e. g.,  lon=c(5.43, 6.00), lat=c(52.93,52.94))
@@ -71,10 +73,10 @@ plot_slopes_by_location<-function(Proc.data, location, log.light.borders='auto',
 #' @author Eldar Rakhimberdiev
 #' @export
 make.calibration<-function(Proc.data, Calibration.periods, model.ageing=FALSE, plot.each=FALSE, plot.final=FALSE, likelihood.correction='auto', fixed.logSlope=c(NA,NA), suggest.irrad.borders=FALSE, return.slopes=FALSE) {
-   Calibration.periods[,1]<-as.POSIXct(Calibration.periods[,1], tz='gmt')
-   Calibration.periods[,2]<-as.POSIXct(Calibration.periods[,2], tz='gmt')
-   Calibration.periods$calibration.start[is.na(Calibration.periods$calibration.start)]<-as.POSIXct("1900-01-01", tz='gmt')
-   Calibration.periods$calibration.stop[is.na(Calibration.periods$calibration.stop)]<-as.POSIXct("2100-01-01", tz='gmt')
+   Calibration.periods[,1]<-as.POSIXct(Calibration.periods[,1], tz='GMT')
+   Calibration.periods[,2]<-as.POSIXct(Calibration.periods[,2], tz='GMT')
+   Calibration.periods$calibration.start[is.na(Calibration.periods$calibration.start)]<-as.POSIXct("1900-01-01", tz='GMT')
+   Calibration.periods$calibration.stop[is.na(Calibration.periods$calibration.stop)]<-as.POSIXct("2100-01-01", tz='GMT')
    for (i in 1:nrow(Calibration.periods)) {
      if (Calibration.periods[i,1]>=Calibration.periods[i,2]) stop('Calibration start in some period is later than calibration end')
 	 if (i>1) if ( Calibration.periods[i,1]<=Calibration.periods[(i-1),2]) stop('Calibration periods overlap')
@@ -90,10 +92,10 @@ make.calibration<-function(Proc.data, Calibration.periods, model.ageing=FALSE, p
    if (likelihood.correction=='auto') {
       if (Proc.data$saving.period>=550) {
 	     likelihood.correction<-FALSE
-         cat('likelihood correction switched to FALSE\n')
+         message('likelihood correction switched to FALSE\n')
 	  } else {
 	  likelihood.correction<-TRUE
-	  cat('likelihood correction switched to TRUE\n')
+	  message('likelihood correction switched to TRUE\n')
 	  }
    }
    Proc.data$log.irrad.borders=calibration.parameters$log.irrad.borders
@@ -165,26 +167,26 @@ make.calibration<-function(Proc.data, Calibration.periods, model.ageing=FALSE, p
 #' @param print.optimization do you want every optimization iteration to be printed? If TRUE - Lon, Lat, calibration mean and calibration sd are being printed. Optimization tries to minimize the latter.
 #' @param reltol tolerance for optimization, see \code{\link{optim}} for more details
 #' @details The idea behind the function is that it tries to minimize variance between slopes for the whole period by optimizing location. It can be seen as an extension of Hill-Ekstrom calibration idea.
+#' @return vector with coordinates - longitude and latitude. 
 #' @examples
 #' #this example takes about 15 minutes to run
 #' \dontrun{
 #' File<-system.file("extdata", "Godwit_TAGS_format.csv", package = "FLightR")
 #' Proc.data<-get.tags.data(File)
 #' plot_slopes_by_location(Proc.data=Proc.data, location=c(5.43, 52.93))
-#' abline(v=as.POSIXct("2013-08-20")) # end of first calibration period
-#' abline(v=as.POSIXct("2014-05-05")) # start of the second calibration period
+#' abline(v=as.POSIXct("2013-08-20", tz='GMT')) # end of first calibration period
+#' abline(v=as.POSIXct("2014-05-05", tz='GMT')) # start of the second calibration period
 #' Location<-find.stationary.location(Proc.data, '2013-07-20', '2013-08-20', initial.coords=c(10, 50))
 #' }
 #' @author Eldar Rakhimberdiev
 #' @export		
 find.stationary.location<-function(Proc.data, calibration.start,  calibration.stop, plot=TRUE, initial.coords=NULL, print.optimization=TRUE, reltol=1e-4) {
-
-  if (is.null(initial.coords)) stop('current function vesrion requires some inital coordinates to start search, they should not be very close but within few thousand km!')
+   if (is.null(initial.coords)) stop('current function vesrion requires some inital coordinates to start search, they should not be very close but within few thousand km!')
    ll_function<-function(initial.coords, Proc.data, calibration.start, calibration.stop, plot=TRUE, stage=1) {
    sink("tmp")
         Calibration.period<-data.frame(
-        calibration.start=as.POSIXct(calibration.start, tz='UTC'),
-        calibration.stop=as.POSIXct(calibration.stop, tz='UTC'),
+        calibration.start=as.POSIXct(calibration.start, tz='GMT'),
+        calibration.stop=as.POSIXct(calibration.stop, tz='GMT'),
         lon=initial.coords[1], lat=initial.coords[2])
         #use c() also for the geographic coordinates, if you have more than one calibration location
         # (e. g.,  lon=c(5.43, 6.00), lat=c(52.93,52.94))
@@ -210,39 +212,38 @@ find.stationary.location<-function(Proc.data, calibration.start,  calibration.st
 	   log.irrad.borders=log.irrad.borders, 
        plot.each = FALSE, plot.final = FALSE, 
 	   suggest.irrad.borders=FALSE))
-	   
 	}   
-       if (plot) plot_slopes(calibration.parameters$All.slopes)
-	   suppressWarnings(sink())
-	   percent_excluded<-1-(sum(is.finite(calibration.parameters$All.slopes$Slopes$logSlope))/Twilights_total)
+    if (plot) plot_slopes(calibration.parameters$All.slopes)
+	     suppressWarnings(sink())
+	     percent_excluded<-1-(sum(is.finite(calibration.parameters$All.slopes$Slopes$logSlope))/Twilights_total)
 
-	   if (stage==1) {
-     	   if (print.optimization) cat(paste(initial.coords[1], initial.coords[2], calibration.parameters$All.slopes$Parameters$LogSlope[1], calibration.parameters$All.slopes$Parameters$LogSlope[2], percent_excluded), '\n')
+	if (stage==1) {
+     	   if (print.optimization) message(paste(initial.coords[1], initial.coords[2], calibration.parameters$All.slopes$Parameters$LogSlope[1], calibration.parameters$All.slopes$Parameters$LogSlope[2], percent_excluded), '\n')
 		   #print(table(calibration.parameters$All.slopes$Slopes$Type))
 	   if (length(table(calibration.parameters$All.slopes$Slopes$Type))==1) {
-		   print('only_one_twilight_type_left!\n')
+		   warning('only_one_twilight_type_left!\n')
 		   return(sum(is.finite(calibration.parameters$All.slopes$Slopes$logSlope)))
-		  } else {
+	   } else {
           return(calibration.parameters$All.slopes$Parameters$LogSlope[2]^2+percent_excluded^2)
 		  }
-	   } else {
-	       Dat<-calibration.parameters$All.slopes$Slopes[is.finite(calibration.parameters$All.slopes$Slopes$logSlope),]
-	       if (length(table(Dat$Type))==1 | min(table(Dat$Type))<=2) {
-	     	   print('only_one_twilight_type_left!\n')
+	} else {
+	    Dat<-calibration.parameters$All.slopes$Slopes[is.finite(calibration.parameters$All.slopes$Slopes$logSlope),]
+	    if (length(table(Dat$Type))==1 | min(table(Dat$Type))<=2) {
+	     	   warning('only_one_twilight_type_left!\n')
 		       Val<-nrow(Dat)
-		   } else {
+	   } else {
 		   #Dat<-subset(calibration.parameters$All.slopes$Slopes, is.finite(logSlope), select=c(logSlope, Time, Type))
 		   #print(Dat)
      	   Val<-log(1/(stats::anova(stats::lm(logSlope~Time+I(Time^2)+Type, data=Dat),stats::lm(logSlope~Time, data=Dat))[2,6])) +percent_excluded^2 #-log(1/(percent_excluded+0.001)
-		   }
-     	   if (print.optimization) cat(paste(initial.coords[1], initial.coords[2], calibration.parameters$All.slopes$Parameters$LogSlope[1], calibration.parameters$All.slopes$Parameters$LogSlope[2]), Val,  percent_excluded, '\n')
-           return(Val)
+		}
+     	if (print.optimization) message(paste(initial.coords[1], initial.coords[2], calibration.parameters$All.slopes$Parameters$LogSlope[1], calibration.parameters$All.slopes$Parameters$LogSlope[2]), Val,  percent_excluded, '\n')
+        return(Val)
 	   }
    }
 
-   cat('stage 1...\n')
+   message('stage 1...\n')
    tryCatch(Res<-stats::optim(initial.coords, fn=ll_function, Proc.data=Proc.data, calibration.start=calibration.start, calibration.stop=calibration.stop, plot=plot, control=list(reltol=1e-2)), finally=try(suppressWarnings(sink())))
-   cat('stage 2...\n')
+   message('stage 2...\n')
    
    tryCatch(Res<-stats::optim(Res$par, fn=ll_function, Proc.data=Proc.data, calibration.start=calibration.start, calibration.stop=calibration.stop, plot=plot, stage=2,control=list(reltol=reltol)), finally=try(suppressWarnings(sink())))
    
@@ -273,7 +274,7 @@ find.stationary.location<-function(Proc.data, calibration.start,  calibration.st
 #' Proc.data<-get.tags.data(File, end.date=as.POSIXct('2013-07-02', tz='GMT'))
 #' Calibration.periods<-data.frame(
 #'        calibration.start=NA,
-#'        calibration.stop=as.POSIXct("2013-08-20"),
+#'        calibration.stop=as.POSIXct("2013-08-20", tz='GMT'),
 #'        lon=5.43, lat=52.93) 
 #'        #use c() also for the geographic coordinates, if you have more than one calibration location
 #'        # (e. g.,  lon=c(5.43, 6.00), lat=c(52.93,52.94))
@@ -402,6 +403,9 @@ get.Irradiance<-function(alpha, r=6378, s=6.9, intigeo.template.correction=FALSE
 
 
 logger.template.calibrarion.internal<-function( Twilight.time.mat.Calib.dawn, Twilight.log.light.mat.Calib.dawn, Twilight.time.mat.Calib.dusk, Twilight.log.light.mat.Calib.dusk, positions=NA, plot.each=TRUE, plot.final=TRUE,log.light.borders=NA,  log.irrad.borders=c(-8, 1.3), impute.on.boundaries=FALSE) {
+
+   oldpar <- graphics::par(no.readonly = TRUE)    
+   on.exit(graphics::par(oldpar))   
 	# =================
 	# in this function I'll add a new lnorm calibration...
 	#
@@ -426,11 +430,11 @@ logger.template.calibrarion.internal<-function( Twilight.time.mat.Calib.dawn, Tw
 	Calib.data.dawn<-data.frame()
 	if (plot.each) graphics::par(ask=FALSE)
 	for (dawn in 1:dim(Twilight.time.mat.Calib.dawn)[2]) {
-    cat("\r checking dawn", dawn)
+    message("\r checking dawn", dawn)
 		#Twilight.solar.vector<-solar(as.POSIXct(Twilight.time.mat.Calib.dawn[, dawn], tz="gmt", origin="1970-01-01"))
 		Data<-check.boundaries(positions$dawn[dawn,], Twilight.solar.vector=NULL,  Twilight.log.light.vector = Twilight.log.light.mat.Calib.dawn[,dawn], plot=plot.each, verbose=FALSE,  log.light.borders=log.light.borders, log.irrad.borders=log.irrad.borders, dusk=FALSE, Twilight.time.vector=Twilight.time.mat.Calib.dawn[, dawn], impute.on.boundaries=impute.on.boundaries)
 		if (length(Data)==0) {
-		cat ("\r dawn", dawn, "was excluded from the calibration")
+		message("\r dawn", dawn, "was excluded from the calibration")
 		} else {
 		Calib.data.dawn<-rbind(Calib.data.dawn, cbind(LogLight=Data[,1], LogIrrad=Data[,2], Day=dawn, Time=Data[,3], Elevs=Data[,4]))	
 		}		
@@ -439,18 +443,18 @@ logger.template.calibrarion.internal<-function( Twilight.time.mat.Calib.dawn, Tw
 
 	Calib.data.dusk<-data.frame()
 	for (dusk in 1:dim(Twilight.time.mat.Calib.dusk)[2]) {
-    cat("\r checking dusk", dusk )
+    message("\r checking dusk", dusk )
 
 		#Twilight.solar.vector<-solar(as.POSIXct(Twilight.time.mat.Calib.dusk[, dusk], tz="gmt", origin="1970-01-01"))
 		Data<-check.boundaries(positions$dusk[dusk,], Twilight.solar.vector=NULL,  Twilight.log.light.vector=Twilight.log.light.mat.Calib.dusk[,dusk], plot=plot.each, verbose=FALSE,  log.light.borders=log.light.borders, log.irrad.borders=log.irrad.borders, dusk=TRUE,  Twilight.time.vector=Twilight.time.mat.Calib.dusk[, dusk], impute.on.boundaries=impute.on.boundaries)
 		if (length(Data)==0) {
-		cat ("\r dusk", dusk, "was excluded from the calibration")
+		message("\r dusk", dusk, "was excluded from the calibration")
 		} else {
 		Calib.data.dusk<-rbind(Calib.data.dusk, cbind(LogLight=Data[,1], LogIrrad=Data[,2], Day=dim(Twilight.time.mat.Calib.dawn)[2]+dusk, Time=Data[,3], Elevs=Data[,4]))
 		}
 	}
 	if (nrow(Calib.data.dusk)>0) {Calib.data.dusk$type<-"Dusk"}
-	cat('\r')
+	message('\r')
 	if (nrow(Calib.data.dusk)==0 & nrow(Calib.data.dawn)==0) stop('Error: None of twilights could happen in the location... Something went wrong at the previous stages')
 	Calib.data.all<-rbind(Calib.data.dawn, Calib.data.dusk)
 	if (plot.final) {
@@ -461,7 +465,8 @@ logger.template.calibrarion.internal<-function( Twilight.time.mat.Calib.dawn, Tw
 	}
 	
 	Calib.data.all$fDay<-as.factor(Calib.data.all$Day)
-	cat('\r\n')
+	message('\r\n')
+	message('\r\n')
 	return(Calib.data.all)	
 }
 
@@ -478,7 +483,7 @@ logger.template.calibration<-function(Twilight.time.mat.Calib.dawn, Twilight.log
 get.calib.param<-function(Calib.data.all, plot=FALSE, calibration.type=NULL) {
 
 if (is.null(calibration.type)) calibration.type="parametric.slope"
-cat("calibration method used:", calibration.type, "\n")
+message("calibration method used:", calibration.type, "\n")
 
 Calib.data.all$fTwilight<-Calib.data.all$fDay
 
@@ -577,22 +582,23 @@ return(Res)
 
 
 plot_slopes<-function(all.slopes, ylim=NULL, xlim=NULL) {
-old.par <- graphics::par(no.readonly = TRUE) 
-#on.exit(par(old.par))
+   oldpar <- graphics::par(no.readonly = TRUE)   
+   on.exit(graphics::par(oldpar))    
+
 all.slopes$Slopes<-all.slopes$Slopes[all.slopes$Slopes$Slope>0,]
 if (is.null(xlim)) {
-   graphics::plot(log(all.slopes$Slopes$Slope)~as.POSIXct(all.slopes$Slopes$Time, tz="UTC", origin="1970-01-01"), type="n", main="red - dawn, black - dusk", xlab="time", ylab="log(Slope)", ylim=ylim, las=1)
+   graphics::plot(log(all.slopes$Slopes$Slope)~as.POSIXct(all.slopes$Slopes$Time, tz="GMT", origin="1970-01-01"), type="n", main="red - dawn, black - dusk", xlab="time", ylab="log(Slope)", ylim=ylim, las=1)
 } else {
-   graphics::plot(log(all.slopes$Slopes$Slope)~ as.POSIXct(all.slopes$Slopes$Time, tz="UTC", origin="1970-01-01"), type="n", main="red - dawn, black - dusk", xlab="time", ylab="log(Slope)", ylim=ylim, las=1, xlim=  as.POSIXct(xlim, tz='UTC'))
+   graphics::plot(log(all.slopes$Slopes$Slope)~ as.POSIXct(all.slopes$Slopes$Time, tz="GMT", origin="1970-01-01"), type="n", main="red - dawn, black - dusk", xlab="time", ylab="log(Slope)", ylim=ylim, las=1, xlim=  as.POSIXct(xlim, tz='GMT'))
 
 }
 
-graphics::lines(log(Slope)~ as.POSIXct(Time, tz="UTC", origin="1970-01-01"), data=all.slopes$Slopes[all.slopes$Slopes$Type=="Dusk",])
-graphics::points(log(Slope)~ as.POSIXct(Time, tz="UTC", origin="1970-01-01"), data=all.slopes$Slopes[all.slopes$Slopes$Type=="Dusk",], pch="+")
-graphics::points(log(Slope)~ as.POSIXct(Time, tz="UTC", origin="1970-01-01"), data=all.slopes$Slopes[all.slopes$Slopes$Type=="Dawn",], pch="+", col="red")
-graphics::lines(log(Slope)~ as.POSIXct(Time, tz="UTC", origin="1970-01-01"), data=all.slopes$Slopes[all.slopes$Slopes$Type=="Dawn",], col="red")
+graphics::lines(log(Slope)~ as.POSIXct(Time, tz="GMT", origin="1970-01-01"), data=all.slopes$Slopes[all.slopes$Slopes$Type=="Dusk",])
+graphics::points(log(Slope)~ as.POSIXct(Time, tz="GMT", origin="1970-01-01"), data=all.slopes$Slopes[all.slopes$Slopes$Type=="Dusk",], pch="+")
+graphics::points(log(Slope)~ as.POSIXct(Time, tz="GMT", origin="1970-01-01"), data=all.slopes$Slopes[all.slopes$Slopes$Type=="Dawn",], pch="+", col="red")
+graphics::lines(log(Slope)~ as.POSIXct(Time, tz="GMT", origin="1970-01-01"), data=all.slopes$Slopes[all.slopes$Slopes$Type=="Dawn",], col="red")
 #invisible()
-#par(old.par)
+return(NULL)
 }
 
 
@@ -644,7 +650,7 @@ Twilights_total<-length(c(Dusk.calib.days,Dawn.calib.days))
      Calib.data.all<-logger.template.calibration(Twilight.time.mat.Calib.dawn, Twilight.log.light.mat.Calib.dawn, Twilight.time.mat.Calib.dusk, Twilight.log.light.mat.Calib.dusk, positions=Positions, log.light.borders=log.light.borders,  log.irrad.borders=c(-10,10), plot.each=plot.each, plot.final=plot.final, impute.on.boundaries=Proc.data$impute.on.boundaries)
 
      log.irrad.borders<-suggest.irrad.boundaries(Calib.data.all) 
-     cat('!!! log.irrad.borders were updated to new values:', log.irrad.borders[1], log.irrad.borders[2], '\n')
+     warning('!!! log.irrad.borders were updated to new values:', log.irrad.borders[1], log.irrad.borders[2], '\n')
   }
 
 Calib.data.all<-logger.template.calibration(Twilight.time.mat.Calib.dawn, Twilight.log.light.mat.Calib.dawn, Twilight.time.mat.Calib.dusk, Twilight.log.light.mat.Calib.dusk, positions=Positions, log.light.borders=log.light.borders,  log.irrad.borders=log.irrad.borders, plot.each=plot.each, plot.final=plot.final, impute.on.boundaries=Proc.data$impute.on.boundaries)
@@ -691,8 +697,8 @@ make_likelihood_correction_function<-function(calib_log_mean, calib_log_sd, cur_
    cur_mean_range<-c(exp(calib_log_mean)-5*exp(calib_log_sd), exp(calib_log_mean)+5*exp(calib_log_sd))
    Res<-c()
    for (i in 1:npoints) {
-   	  cat('\r simulation:  ', round(i/npoints*100), '%', sep='')
-	  cat('\r')
+   	  message('\r simulation:  ', round(i/npoints*100), '%', sep='')
+	  message('\r')
       cur_mean<-stats::runif(300, cur_mean_range[1], cur_mean_range[2])
 	  cur_sd<-stats::runif(1, cur_sd_range[1], cur_sd_range[2])
       Cur_max_real<- stats::optimize(f=function(x) 
@@ -702,8 +708,8 @@ make_likelihood_correction_function<-function(calib_log_mean, calib_log_sd, cur_
    }
    Res<-as.data.frame(Res)
    Res$Corr <- exp(Res$calib_log_mean)-Res$cur_mean_max
-   cat('\r  estimating correction function...')
-   cat('\r')
+   message('\r  estimating correction function...')
+   message('\r')
 
    MvExp<-mgcv::gamm(Corr~s(cur_sd), data=Res, weights=nlme::varExp(form =~ cur_sd))
    # now we check for the outliers..
@@ -722,8 +728,8 @@ make_likelihood_correction_function<-function(calib_log_mean, calib_log_sd, cur_
       graphics::lines(exp(Res$calib_log_mean[1])-mgcv::predict.gam(MvExp$gam, newdata=data.frame(cur_sd=XX))~XX, col='red')
 	  }
 	Out<-list(c_fun=c_fun, Res=Res)
-	cat('\r')
-	cat('\n')
+	message('\r')
+	message('\n')
 	return(Out)
 }
 
@@ -764,7 +770,7 @@ return(Calibration)
 correct.hours<-function(datetime) {
 	# this function is supposed to correct hours by adding some amount of them.
    hours <- as.numeric(format(datetime,"%H"))+as.numeric(format(datetime,"%M"))/60
-   hours[as.POSIXlt(datetime)$isdst==1] <-hours[as.POSIXlt(datetime)$isdst==1]-1
+   hours[as.POSIXlt(datetime, tz='GMT')$isdst==1] <-hours[as.POSIXlt(datetime, tz='GMT')$isdst==1]-1
 	cor <- rep(NA, 24)
 	for(i in 0:23){
 		cor[i+1] <- max(abs((c(hours[1],hours)+i)%%24 - 
@@ -784,8 +790,8 @@ make.result.list<-function(Data, raw.X, raw.Y) {
 	Res$Hour<-raw.Y
 	Result<-list(Data=Res)
 	Result$Data$gmt.adj<-Result$Data$gmt
-	Result$Data$gmt<- as.POSIXct(Result$Data$gmt, tz="UTC", origin="1970-01-01")
-	Result$Data$gmt.adj<- as.POSIXct(Result$Data$gmt.adj, tz="UTC", origin="1970-01-01")
+	Result$Data$gmt<- as.POSIXct(Result$Data$gmt, tz="GMT", origin="1970-01-01")
+	Result$Data$gmt.adj<- as.POSIXct(Result$Data$gmt.adj, tz="GMT", origin="1970-01-01")
 	return(Result)
 }
 

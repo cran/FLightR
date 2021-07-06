@@ -14,13 +14,14 @@
 #' @param seasonal.donut.proportion how much of X axis should color wheel occupy.
 #' return either NULL or ggplot2 class object
 #' @param save should function save results with \code{\link[ggplot2]{ggsave}}?
+#' @return if 'return.ggobj=TRUE' return ggplot object otherwise returns 'NULL'.
 #' @examples
 #' File<-system.file("extdata", "Godwit_TAGS_format.csv", package = "FLightR")
 #' # to run example fast we will cut the real data file by 2013 Aug 20
 #' Proc.data<-get.tags.data(File, end.date=as.POSIXct('2013-06-25', tz='GMT'))
 #' Calibration.periods<-data.frame(
-#'        calibration.start=as.POSIXct(c(NA, "2014-05-05")),
-#'        calibration.stop=as.POSIXct(c("2013-08-20", NA)),
+#'        calibration.start=as.POSIXct(c(NA, "2014-05-05"), tz='GMT'),
+#'        calibration.stop=as.POSIXct(c("2013-08-20", NA), tz='GMT'),
 #'        lon=5.43, lat=52.93) 
 #'        #use c() also for the geographic coordinates, if you have more than one calibration location
 #'        # (e. g.,  lon=c(5.43, 6.00), lat=c(52.93,52.94))
@@ -151,7 +152,7 @@ options('ggmap'= Opt$ggmap)
     }
   	 background <-do.call(ggmap::get_map, map.options)
 
-	p<-ggmap::ggmap(background, maprange=TRUE)
+	p<-ggmap::ggmap(background)#, maprange=TRUE)
 
 	if (plot.cloud) {
 	 #if (overdateline) Points[,1]<-ifelse(Points[,1]>0, Points[,1]-360, Points[,1])
@@ -161,7 +162,7 @@ options('ggmap'= Opt$ggmap)
 	 lon<-NA
 	 lat<-NA
 	 #################
-	 p<-p+ ggplot2::stat_density2d(data=data.frame(Points), ggplot2::aes(fill = ..level.., alpha = ..level.., x=lon, y=lat), size = 0.01,  geom = 'polygon', n=400) 
+	 p<-  p+ ggplot2::stat_density2d(data=data.frame(Points), ggplot2::aes(fill = ..level.., alpha = ..level.., x=lon, y=lat), size = 0.01,  geom = 'polygon', n=400) 
 	 
 	 p<-p+ ggplot2::scale_fill_gradient(low = "green", high = "red") 
 	 p<-p+ ggplot2::scale_alpha(range = c(0.00, 0.25), guide = FALSE) 
@@ -221,7 +222,7 @@ options('ggmap'= Opt$ggmap)
 	if (is.null(save.options$filename)) save.options$filename<-"FLightR.map.pdf"
 	do.call(ggplot2::ggsave, save.options)
 	}
-	if (return.ggobj) return(p)
+	if (return.ggobj) {return(p)} else {return(NULL)}
 	}
 
 #' plots result by longitude and latitude
@@ -229,14 +230,14 @@ options('ggmap'= Opt$ggmap)
 #' This function plots result by latitude and longitude in either vertical or horizontal layout.
 #' @param Result FLightR result object obtained from \code{\link{run.particle.filter}}
 #' @param scheme either 'vertical' or 'horizontal' layouts
-#' return NULL
+#' return 'NULL'
 #' @examples
 #' File<-system.file("extdata", "Godwit_TAGS_format.csv", package = "FLightR")
 #' # to run example fast we will cut the real data file by 2013 Aug 20
 #' Proc.data<-get.tags.data(File, end.date=as.POSIXct('2013-07-02', tz='GMT'))
 #' Calibration.periods<-data.frame(
-#'        calibration.start=as.POSIXct(c(NA, "2014-05-05")),
-#'        calibration.stop=as.POSIXct(c("2013-08-20", NA)),
+#'        calibration.start=as.POSIXct(c(NA, "2014-05-05"), tz='GMT'),
+#'        calibration.stop=as.POSIXct(c("2013-08-20", NA), tz='GMT'),
 #'        lon=5.43, lat=52.93) 
 #'        #use c() also for the geographic coordinates, if you have more than one calibration location
 #'        # (e. g.,  lon=c(5.43, 6.00), lat=c(52.93,52.94))
@@ -262,10 +263,9 @@ options('ggmap'= Opt$ggmap)
 #' @author Eldar Rakhimberdiev
 #' @export plot_lon_lat
 plot_lon_lat<-function(Result, scheme=c("vertical", "horizontal")) {
-
+   oldpar <- graphics::par(no.readonly = TRUE)    
+   on.exit(graphics::par(oldpar))         
    Quantiles<-Result$Results$Quantiles
-   
-   
    	# check whether Grid was over dateline:
 	overdateline<-ifelse(attr(Result$Spatial$Grid, 'left')>	attr(Result$Spatial$Grid, 'right'), TRUE, FALSE)
 
@@ -292,11 +292,9 @@ plot_lon_lat<-function(Result, scheme=c("vertical", "horizontal")) {
    Years<-unique(format(Quantiles$time, format="%Y"))
    eq<-c(as.POSIXct(paste(Years, "-09-22 00:00:00 GMT", sep="")), as.POSIXct(paste(Years, "-03-20 12:00:00 GMT", sep="")))
    eq<-eq[eq>min(Quantiles$time) & eq<max(Quantiles$time)]
-   #-------
-   
+
    #------- vert grid
-   
-   Vert_grid<-seq(as.POSIXct("2000-01-01"), as.POSIXct("2030-01-01"), by="month")
+   Vert_grid<-seq(as.POSIXct("2000-01-01", tz='GMT'), as.POSIXct("2030-01-01", tz='GMT'), by="month")
    Vert_grid<-Vert_grid[Vert_grid>=min(Quantiles$time) & Vert_grid<=max(Quantiles$time)]
   
    #Longitude
@@ -307,7 +305,6 @@ plot_lon_lat<-function(Result, scheme=c("vertical", "horizontal")) {
    graphics::axis.POSIXct(1, x=Quantiles$time,  format="1-%b")
    graphics::box()
 
-   #################
    # add vertical lines for the first day of every month
    
    graphics::abline(v=Vert_grid, col=grDevices::grey(0.5), lty=2)
@@ -325,7 +322,6 @@ plot_lon_lat<-function(Result, scheme=c("vertical", "horizontal")) {
    col=grDevices::grey(0.7), border=grDevices::grey(0.5))
 
    graphics::lines(Quantiles$Medianlon~Quantiles$time, col=grDevices::grey(0.1),lwd=2)
-   
 
    #Latitude
    graphics::par(mar=c(3,4,1,1))
@@ -348,7 +344,7 @@ plot_lon_lat<-function(Result, scheme=c("vertical", "horizontal")) {
            col=grDevices::grey(0.7), border=grDevices::grey(0.5))
 
    graphics::lines(Quantiles$Medianlat~Quantiles$time, col=grDevices::grey(0.1),lwd=2)
-
+   return(NULL)
 }
 
 
@@ -389,7 +385,7 @@ get_time_spent_buffer<-function(Result, dates=NULL, percentile=0.5, r=NULL) {
 			if (length(twilights.index)==0) stop("dates do not overlap with the track time span!")
 		}
 	  }
-	 cat('function will plot', length(twilights.index), 'twilights\n')
+	 message('function will plot ', length(twilights.index), ' twilights\n')
 
   Points_selected<-get_utilisation_points(Result, twilights.index, percentile)
   
@@ -437,8 +433,8 @@ get_time_spent_buffer<-function(Result, dates=NULL, percentile=0.5, r=NULL) {
 #' # to run example fast we will cut the real data file by 2013 Aug 20
 #' Proc.data<-get.tags.data(File, end.date=as.POSIXct('2013-06-25', tz='GMT'))
 #' Calibration.periods<-data.frame(
-#'        calibration.start=as.POSIXct(c(NA, "2014-05-05")),
-#'        calibration.stop=as.POSIXct(c("2013-08-20", NA)),
+#'        calibration.start=as.POSIXct(c(NA, "2014-05-05"), tz='GMT'),
+#'        calibration.stop=as.POSIXct(c("2013-08-20", NA), tz='GMT'),
 #'        lon=5.43, lat=52.93) 
 #'        #use c() also for the geographic coordinates, if you have more than one calibration location
 #'        # (e. g.,  lon=c(5.43, 6.00), lat=c(52.93,52.94))
@@ -503,9 +499,9 @@ res_buffers<-c()
 nPoints<-c()
 
 for (percentile in percentiles) {
-res_cur<- get_time_spent_buffer(Result, dates, percentile, r)
-res_buffers<-c(res_buffers, res_cur$Buffer)
-nPoints<-c(nPoints, res_cur$nPoints)
+   res_cur<- get_time_spent_buffer(Result, dates, percentile, r)
+   res_buffers<-c(res_buffers, res_cur$Buffer)
+   nPoints<-c(nPoints, res_cur$nPoints)
 }
 
 # Now I want to take only the upper levels from identical nPoints
@@ -682,13 +678,14 @@ seasonal_donut<-function() {
 #' @param object either output from \code{\link{make.prerun.object}} or \code{\link{run.particle.filter}}
 #' @param date either NULL or a date (possibly with time) closest to the twilight you wan to be plotted
 #' @param twilight.index number of likelihood surface to be plotted 
+#' @return 'NULL'
 #' @examples
 #' File<-system.file("extdata", "Godwit_TAGS_format.csv", package = "FLightR")
 #' # to run example fast we will cut the real data file by 2013 Aug 20
 #' Proc.data<-get.tags.data(File, end.date=as.POSIXct('2013-07-02', tz='GMT'))
 #' Calibration.periods<-data.frame(
-#'        calibration.start=as.POSIXct(c(NA, "2014-05-05")),
-#'        calibration.stop=as.POSIXct(c("2013-08-20", NA)),
+#'        calibration.start=as.POSIXct(c(NA, "2014-05-05"), tz='GMT'),
+#'        calibration.stop=as.POSIXct(c("2013-08-20", NA), tz='GMT'),
 #'        lon=5.43, lat=52.93) 
 #'        #use c() also for the geographic coordinates, if you have more than one calibration location
 #'        # (e. g.,  lon=c(5.43, 6.00), lat=c(52.93,52.94))
@@ -710,7 +707,7 @@ seasonal_donut<-function() {
 plot_likelihood<-function(object, date=NULL, twilight.index=NULL) {
    my.golden.colors <- grDevices::colorRampPalette(c("white","#FF7100"))
    if (!is.null(date)) {
-      date<-as.POSIXct(date, tz='UTC')
+      date<-as.POSIXct(date, tz='GMT')
       twilight.index<-which.min(abs(object$Indices$Matrix.Index.Table$time-date))
 	}
 
@@ -720,6 +717,7 @@ plot_likelihood<-function(object, date=NULL, twilight.index=NULL) {
    wrld_simpl<-NA				   
    load(system.file("data", "wrld_simpl.rda", package = "maptools"))
    sp::plot(wrld_simpl, add=TRUE)
+   return(NULL)
 }
 
 get_points_distribution<-function(Result, twilights.index) {

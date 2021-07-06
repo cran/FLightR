@@ -45,6 +45,9 @@ return either NULL or ggplot2 class object}
 
 \item{save}{should function save results with \code{\link[ggplot2]{ggsave}}?}
 }
+\value{
+if 'return.ggobj=TRUE' return ggplot object otherwise returns 'NULL'.
+}
 \description{
 plots track over map with probability cloud. Can plot only part of the track if dates are specified. Note that you can use it only after obtaining and registering in you current session Google Api Key. For details on the API key check [here](http://ornithologyexchange.org/forums/topic/38315-mapflightrggmap-error).
 }
@@ -53,8 +56,8 @@ File<-system.file("extdata", "Godwit_TAGS_format.csv", package = "FLightR")
 # to run example fast we will cut the real data file by 2013 Aug 20
 Proc.data<-get.tags.data(File, end.date=as.POSIXct('2013-06-25', tz='GMT'))
 Calibration.periods<-data.frame(
-       calibration.start=as.POSIXct(c(NA, "2014-05-05")),
-       calibration.stop=as.POSIXct(c("2013-08-20", NA)),
+       calibration.start=as.POSIXct(c(NA, "2014-05-05"), tz='GMT'),
+       calibration.stop=as.POSIXct(c("2013-08-20", NA), tz='GMT'),
        lon=5.43, lat=52.93) 
        #use c() also for the geographic coordinates, if you have more than one calibration location
        # (e. g.,  lon=c(5.43, 6.00), lat=c(52.93,52.94))

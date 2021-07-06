@@ -27,13 +27,16 @@ make.calibration(
 
 \item{plot.final}{Do you want final calibration graph to be plotted. On the graph you can see all the observed versus expected light levels. All slopes should be similar.}
 
-\item{likelihood.correction}{will estimate correction of likelihood for the current calibration parameters. Highly recommended not to be change from 'auto'. In this case FLightR will switch it to FALSE in case tag saved dat on 10 minutes or longer period.}
+\item{likelihood.correction}{will estimate correction of likelihood for the current calibration parameters. Highly recommended not to be change from 'auto'. In this case FLightR will switch it to FALSE in case tag saved data on 10 minutes or longer period.}
 
 \item{fixed.logSlope}{these are mean (1) and SD (2) for distribution of slopes. Should normally be estimated from the data (and thus default is c(NA, NA)). Change any of these two finite values if you want them to be predetermined and not estimated from the calibration data.}
 
 \item{suggest.irrad.borders}{experimental parameter! If set to TRUE function will try to find the best values for the log.irrad.borders}
 
 \item{return.slopes}{if true function will return estimated individual twilight slopes.}
+}
+\value{
+calibration object to be uses in the \code{\link{make.prerun.object}}
 }
 \description{
 Function estimates all necessary parameters from the calibration data logged in a known location or locations.
@@ -43,7 +46,7 @@ File<-system.file("extdata", "Godwit_TAGS_format.csv", package = "FLightR")
 Proc.data<-get.tags.data(File, end.date=as.POSIXct('2013-08-20', tz='GMT'))
 Calibration.periods<-data.frame(
        calibration.start=NA,
-       calibration.stop=as.POSIXct("2013-08-20"),
+       calibration.stop=as.POSIXct("2013-08-20", tz='GMT'),
        lon=5.43, lat=52.93) 
        #use c() also for the geographic coordinates, if you have more than one calibration location
        # (e. g.,  lon=c(5.43, 6.00), lat=c(52.93,52.94))
