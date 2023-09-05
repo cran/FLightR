@@ -1,10 +1,10 @@
 Package: FLightR
 Type: Package
 Title: Reconstruct Animal Paths from Solar Geolocation Loggers Data
-Version: 0.5.2
-Date: 2022-02-14
+Version: 0.5.3
+Date: 2023-09-04
 Authors@R: c(
-    person("Eldar", "Rakhimberdiev", email = "e.rakhimberdiev@rug.nl", role = c("aut","cre")),
+    person("Eldar", "Rakhimberdiev", email = "eldar.rakhimberdiev@uva.nl", role = c("aut","cre")),
     person("Anatoly", "Saveliev", role = "aut"),
     person("Julia", "Karagicheva", role = "aut"),
     person("Simeon", "Lisovski", role = "ctb"))
@@ -27,11 +27,11 @@ RoxygenNote: 7.1.1
 Suggests: covr, testthat, knitr, rmarkdown
 VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2022-02-15 13:24:48 UTC; eldar
+Packaged: 2023-09-05 12:27:20 UTC; eldar
 Author: Eldar Rakhimberdiev [aut, cre],
   Anatoly Saveliev [aut],
   Julia Karagicheva [aut],
   Simeon Lisovski [ctb]
-Maintainer: Eldar Rakhimberdiev <e.rakhimberdiev@rug.nl>
+Maintainer: Eldar Rakhimberdiev <eldar.rakhimberdiev@uva.nl>
 Repository: CRAN
-Date/Publication: 2022-02-15 16:00:05 UTC
+Date/Publication: 2023-09-05 15:30:15 UTC
