@@ -86,7 +86,9 @@ run.particle.filter<-function(all.out, cpus=NULL, threads=-1, nParticles=1e6, kn
    if (threads<=0) Threads=max(Possible.threads+threads, 1)
    if (threads>0) Threads=min(Possible.threads,threads)
     message("creating cluster with", Threads, "threads")
-    mycl <- parallel::makeCluster(Threads, type=cluster.type)
+    hosts <- rep("localhost",Threads)
+    mycl <- parallel::makeCluster(hosts, type=cluster.type)
+    #mycl <- parallel::makeCluster(Threads, type=cluster.type)
     parallel::clusterSetRNGStream(mycl)
 	parallel::clusterEvalQ(mycl, library("FLightR")) 
 	message('   Done\n')
@@ -194,7 +196,9 @@ generate.points.dirs<-function(x , in.Data, Current.Proposal, a=45, b=500) {
     if (any(c(Angles.probs, Dists.probs)<0)) {
       warning("PF produced weird probs \n")
       tmp.out<-list(Angles.probs=Angles.probs, Dists.probs=Dists.probs, Current.Proposal=Current.Proposal, Data=x)
-      save(tmp.out, file=paste("tmp.out", round(stats::runif(n=1,min=1, max=1000)), "RData", sep="."))
+      tmpfile<-paste0(tempfile(), '.RData')
+      warning(paste('PF produced weird probs find them saved in', tmpfile))
+      save(tmp.out, file=tmpfile)
       Biol.proposal<-pmax.int(Dists.probs*Angles.probs, 0)
     } else {
       Biol.proposal<-Dists.probs*Angles.probs
@@ -231,7 +235,9 @@ pf.run.parallel.SO.resample<-function(in.Data, threads=2, nParticles=1e6, known.
   #if (!is.null(Parameters$in.Data$Spatial$tmp$dAzimuths)) Parameters$in.Data$Spatial$tmp$Azimuths<-attach.big.matrix(Parameters$in.Data$Spatial$tmp$dAzimuths)
   if (parallel) {
     if (length(existing.cluster)==1) {
-      mycl <- parallel::makeCluster(threads, type=cluster.type)
+      hosts <- rep("localhost",threads)
+      mycl <- parallel::makeCluster(hosts, type=cluster.type)    
+      #mycl <- parallel::makeCluster(threads, type=cluster.type)
       parallel::clusterSetRNGStream(mycl)
       ### we don' need to send all parameters to node. so keep it easy..
       # cleaning dataset
@@ -279,7 +285,7 @@ pf.run.parallel.SO.resample<-function(in.Data, threads=2, nParticles=1e6, known.
 	  in.Data$AB.distance<-c()
 	  #in.Data$AC.distance<-c()
 	  in.Data$AC.distance2<-c()
-	  in.Data$Dif.ang-c()
+	  in.Data$Dif.ang<-c()
 	  #in.Data$BC.mean<-c()
   }
   
@@ -374,8 +380,8 @@ pf.run.parallel.SO.resample<-function(in.Data, threads=2, nParticles=1e6, known.
 
 	AB.distance <- stats::weighted.mean(sf::st_distance(
 	  sf::st_as_sf(as.data.frame(in.Data$Spatial$Grid[Results.stack[,(ncol(Results.stack)-1)], c(1,2), drop=FALSE]),coords=c('lon','lat'),crs=4326), 
-	  sf::st_as_sf(as.data.frame(in.Data$Spatial$Grid[Results.stack[,ncol(Results.stack)], c(1,2), drop=FALSE]),coords=c('lon','lat'),crs=4326))/1000, 
-	  Weights.stack[,ncol(Weights.stack)])
+	  sf::st_as_sf(as.data.frame(in.Data$Spatial$Grid[Results.stack[,ncol(Results.stack)], c(1,2), drop=FALSE]),coords=c('lon','lat'),crs=4326), by_element=TRUE)/1000, 
+	  Weights.stack[,ncol(Weights.stack)]) |> as.numeric()
 	
 	# AC.distance2<-	stats::weighted.mean(sp::spDists(in.Data$Spatial$Grid[Results.stack[,(ncol(Results.stack)-1)], c(1,2), drop=FALSE], 
 	#                                                 in.Data$Spatial$Grid[New.Particles, c(1,2), drop=FALSE], 
@@ -387,7 +393,7 @@ pf.run.parallel.SO.resample<-function(in.Data, threads=2, nParticles=1e6, known.
 	  sf::st_as_sf(as.data.frame(in.Data$Spatial$Grid[New.Particles, c(1,2), drop=FALSE]),coords=c('lon','lat'),crs=4326),
 	  by_element=TRUE
 	  )/1000, 
-	  Weights.stack[,ncol(Weights.stack)]*Current.Weights)
+	  Weights.stack[,ncol(Weights.stack)]*Current.Weights) |> as.numeric()
 	
 	message("AB.distance:", round(AB.distance, 2), "\n")
 	message("AC.distance2:", round(AC.distance2, 2), "\n")
@@ -468,7 +474,9 @@ pf.run.parallel.SO.resample<-function(in.Data, threads=2, nParticles=1e6, known.
 if (is.na(ESS)) {
 	ESS=1
 	Current.Weights.with.Prev.mat<-cbind(Weights.stack, Current.Weights)
-	save(Current.Weights.with.Prev, Current.Weights.with.Prev.mat, Current.Weights, file="tmp.RData")
+	tmpfile<-paste0(tempfile(), '.RData')
+    save(Current.Weights.with.Prev, Current.Weights.with.Prev.mat, Current.Weights, file=tmpfile)
+    warning(paste('find the unexpected weights saved in', tmpfile))
 	}		
     } else {
       ESS<-1
@@ -827,8 +835,10 @@ mu.sigma.truncnorm<-function(x, a=45, b=500) {
     }
     Res=try(stats::optim(c(mean(x),stats::sd(x)), tr.norm, method="BFGS"))
     if (inherits(Res, "try-error")) {
-      save(x, Res, file="x.RData")
+	tmpfile<-paste0(tempfile(), '.RData')
+      save(x, Res, file=tmpfile)
       Res$par<-c(mean(x), stats::sd(x))
+     warning(paste('find the unexpected mu.sigma.truncnorm estimates saved in', tmpfile))
     }
     return(c(Res$par[1], Res$par[2]))
   } else {
@@ -960,8 +970,9 @@ pf.final.smoothing<-function(in.Data, results.stack, precision.sd=25, nParticles
 
   Rows<- try(suppressWarnings(sample.int(nParticles, replace = TRUE, prob = Weights/sum(Weights))))
   if (inherits(Rows ,'try-error')) {
-    warning('final smoothing failed, error data saved to the working directory - smoothing.error.RData!\n')
-	save(last.particles, Weights, file='smoothing.error.RData')
+    tmpfile<-paste0(tempfile(), '.RData')
+	save(last.particles, Weights, file=tmpfile)
+    warning(paste('final smoothing failed, error data saved to the', tmpfile))
     return(results.stack)
 	} else {
     return(results.stack[Rows,])
