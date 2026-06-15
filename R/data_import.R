@@ -3,9 +3,9 @@
 #' 
 #' Reads the data frame with detected twilight events into the FLightR
 #' 
-#' @param filename the name of the file which the data are to be read from. File is supposed to be comma separated file of TAGS format. If it does not contain an absolute path, the file name is relative to the current working directory, getwd(). Tilde-expansion is performed where supported. This can be a compressed file (see \code{\link[base]{file}}). Alternatively, file can be a readable text-mode connection (which will be opened for reading if necessary, and if so closed (and hence destroyed) at the end of the function call). File can also be a complete URL. For the supported URL schemes, see help for \code{\link[base]{url}}.
-#' @param start.date date of beginning of relevant data collection in \code{\link[base]{POSIXct}} format.
-#' @param end.date date of end of relevant data collection in \code{\link[base]{POSIXct}} format.
+#' @param filename the name of the file which the data are to be read from. File is supposed to be comma separated file of TAGS format. If it does not contain an absolute path, the file name is relative to the current working directory, getwd(). Tilde-expansion is performed where supported. This can be a compressed file. Alternatively, file can be a readable text-mode connection (which will be opened for reading if necessary, and if so closed (and hence destroyed) at the end of the function call). File can also be a complete URL.
+#' @param start.date date of beginning of relevant data collection in \code{POSIXct} format.
+#' @param end.date date of end of relevant data collection in \code{POSIXct} format.
 #' @param log.light.borders Numeric vector with length of 2 for minimum and maximum log(light) levels to use. Alternatively character value 'auto', that will allow FLightR to assign these values according to detected tag type.
 #' @param log.irrad.borders Numeric vector with length of 2 for minimum and maximum log(irradiance) values to use. Alternatively character value 'auto', that will allow FLightR to assign these values according to detected tag type.
 #' @param saves character values informing FLightR if min or max values were used by logger.
@@ -37,6 +37,12 @@ get.tags.data<-function(filename=NULL, start.date=NULL, end.date=NULL, log.light
 	     if (saves[1] =='auto') saves<-"max"
 	  }
       if(detected$tagtype=="Intigeo_Mode_4") {
+	     if (log.light.borders[1]=='auto') log.light.borders<-c(1.5, 7)
+	     if (log.irrad.borders[1]=='auto') log.irrad.borders<-c(-3,3)
+	     if (saves[1] =='auto') saves<-"max"
+      }
+      
+      if(detected$tagtype=="Intigeo_Mode_6_clipped") {
 	     if (log.light.borders[1]=='auto') log.light.borders<-c(1.5, 7)
 	     if (log.irrad.borders[1]=='auto') log.irrad.borders<-c(-3,3)
 	     if (saves[1] =='auto') saves<-"max"
@@ -103,15 +109,36 @@ get.tags.data<-function(filename=NULL, start.date=NULL, end.date=NULL, log.light
 get.tag.type<-function(TAGS.twilights) {
 
    Max_light<-max(TAGS.twilights$light)
+   Min_light<-min(TAGS.twilights$light)
    recognized<-FALSE
-   if(round(Max_light,2) >= 10.05 &  (round(Max_light,2) <= 11.22 | round(Max_light,2) >= 11.22 & round(Max_light,2) <=11.35)) {
+   
+   if(Max_light == 1146.681 &  Min_light == 0.32 ) {
+      tagtype<-"Intigeo_Mode_6_clipped"
+      log_transformed<-FALSE
+	  recognized<-TRUE
+   }
+   
+      
+   if(Max_light == log(1146.681) &  Min_light == log(0.32) ) {
+      tagtype<-"Intigeo_Mode_6_clipped"
+      log_transformed<-TRUE
+	  recognized<-TRUE
+   }
+   
+   if(round(Max_light,2) >= 10.05 &  (round(Max_light,2) <= 11.22 | round(Max_light,2) >= 11.22 & round(Max_light,2) <=12.50)) {
+      tagtype<-"Intigeo_Mode_1"
+      log_transformed<-TRUE
+	  recognized<-TRUE
+   }
+   
+   if(round(Max_light,2) >= 10.05 &  (round(Max_light,2) <= 11.22 | round(Max_light,2) >= 11.22 & round(Max_light,2) <=12.50)) {
       tagtype<-"Intigeo_Mode_1"
       log_transformed<-TRUE
 	  recognized<-TRUE
    }
    
   #if (round(Max_light/10) >= 2000 & round(Max_light/10)<= 7000) {
-   if(round(Max_light,2) >= exp(10.05) &  (round(Max_light,2) <= exp(11.22) | round(Max_light,2) >= exp(11.22) & round(Max_light,2) <= exp(11.35))) {
+   if(round(Max_light,2) >= exp(10.05) &  (round(Max_light,2) <= exp(11.22) | round(Max_light,2) >= exp(11.22) & round(Max_light,2) <= exp(12.50))) {
      tagtype<-"Intigeo_Mode_1"
 	 log_transformed<-FALSE
      recognized<-TRUE
